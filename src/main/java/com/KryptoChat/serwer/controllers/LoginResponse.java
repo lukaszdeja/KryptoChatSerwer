@@ -1,4 +1,4 @@
-package com.KryptoChat.serwer.Controllers;
+package com.KryptoChat.serwer.controllers;
 
 public class LoginResponse {
 

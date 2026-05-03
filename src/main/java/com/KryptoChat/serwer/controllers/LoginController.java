@@ -1,4 +1,4 @@
-package com.KryptoChat.serwer.Controllers;
+package com.KryptoChat.serwer.controllers;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import com.KryptoChat.serwer.services.*;

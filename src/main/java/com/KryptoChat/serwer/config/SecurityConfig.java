@@ -1,4 +1,4 @@
-package com.KryptoChat.serwer.services;
+package com.KryptoChat.serwer.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
