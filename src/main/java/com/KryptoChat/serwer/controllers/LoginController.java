@@ -1,4 +1,5 @@
 package com.KryptoChat.serwer.controllers;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import com.KryptoChat.serwer.services.*;
@@ -22,9 +23,14 @@ public class LoginController {
                 request.getPassword()
         );
 
-        LoginResponse response = new LoginResponse(
+        UserToken token = new UserToken(
                 user.getId(),
                 user.getUsername(),
+                user.getGroupId()
+        );
+
+        LoginResponse response = new LoginResponse(
+                token,
                 "Zalogowano"
         );
 
