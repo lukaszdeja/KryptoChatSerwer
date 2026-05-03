@@ -1,5 +1,6 @@
 package com.KryptoChat.serwer.services;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import com.KryptoChat.serwer.repositories.*;
 import com.KryptoChat.serwer.entities.*;
 
@@ -7,9 +8,11 @@ import com.KryptoChat.serwer.entities.*;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public void register(String username, String password) {
@@ -18,7 +21,9 @@ public class UserService {
             throw new RuntimeException("Username already exists");
         }
 
-        User user = new User(username, password);
+        String hashedPassword = passwordEncoder.encode(password);
+
+        User user = new User(username, hashedPassword);
         userRepository.save(user);
     }
 }
