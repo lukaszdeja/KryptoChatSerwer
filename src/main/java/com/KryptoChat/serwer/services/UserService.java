@@ -18,12 +18,23 @@ public class UserService {
     public void register(String username, String password) {
 
         if (userRepository.existsByUsername(username)) {
-            throw new RuntimeException("Username already exists");
+            throw new RuntimeException("Użytkownik o podanej nazwie już istnieje");
         }
 
         String hashedPassword = passwordEncoder.encode(password);
 
         User user = new User(username, hashedPassword);
         userRepository.save(user);
+    }
+
+    public User login(String username, String password) {
+
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("Nie ma takiego użytkownika"));
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new RuntimeException("Błędne hasło");
+        }
+
+        return user;
     }
 }

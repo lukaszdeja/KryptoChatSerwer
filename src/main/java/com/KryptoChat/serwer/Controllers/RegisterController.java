@@ -18,7 +18,7 @@ public class RegisterController {
 
         userService.register(request.getUsername(), request.getPassword());
 
-        return ResponseEntity.ok("User registered");
+        return ResponseEntity.ok("Użytkownik sie zarejestrował");
     }
 }
 
