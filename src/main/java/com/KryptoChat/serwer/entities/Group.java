@@ -8,25 +8,26 @@ public class Group {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long group_id;
+    @Column(name = "group_id")
+    private Long id;
 
-    @Column(nullable = false)
-    private String group_name;
+    @Column(name = "group_name",nullable = false)
+    private String groupName;
 
-    @Column(name = "code", unique = true, nullable = false)
+    @Column(name = "kod", unique = true, nullable = false)
     private String kod;
 
     public Group() {}
 
     public Group(String groupName, String kod) {
-        this.group_name = groupName;
+        this.groupName = groupName;
         this.kod = kod;
     }
 
-    public Long getId() { return group_id; }
+    public Long getId() { return id; }
 
-    public String getGroupName() { return group_name; }
-    public void setGroupName(String groupName) { this.group_name = groupName; }
+    public String getGroupName() { return groupName; }
+    public void setGroupName(String groupName) { this.groupName = groupName; }
 
     public String getKod() { return kod; }
     public void setKod(String kod) { this.kod = kod; }
