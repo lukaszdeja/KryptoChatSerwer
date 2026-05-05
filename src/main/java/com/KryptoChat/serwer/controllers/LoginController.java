@@ -19,7 +19,6 @@ public class LoginController {
     public ResponseEntity<LoginResponse> login(@RequestBody RegisterRequest request) {
         User user;
         LoginResponse response;
-        try {
             user = userService.login(
                     request.getUsername(),
                     request.getPassword()
@@ -35,10 +34,7 @@ public class LoginController {
                     "Zalogowano"
             );
             System.out.println(response.getUserToken().getUsername());
-
-        } catch (RuntimeException e) {
-            response = new LoginResponse(new UserToken(), e.getMessage());
-        }
+            
 
         return ResponseEntity.ok(response);
     }
