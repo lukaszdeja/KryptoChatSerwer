@@ -19,20 +19,10 @@ public class LoginController {
     public ResponseEntity<LoginResponse> login(@RequestBody RegisterRequest request) {
         User user;
         LoginResponse response;
-            user = userService.login(
-                    request.getUsername(),
-                    request.getPassword()
-            );
-            UserToken token = new UserToken(
-                    user.getId(),
-                    user.getUsername(),
-                    user.getGroupId()
-            );
+            user = userService.login(request.getUsername(), request.getPassword());
+            UserToken token = new UserToken(user.getId(), user.getUsername(), user.getGroupId());
 
-            response = new LoginResponse(
-                    token,
-                    "Zalogowano"
-            );
+            response = new LoginResponse(token, "Zalogowano");
             System.out.println(response.getUserToken().getUsername());
             
 
