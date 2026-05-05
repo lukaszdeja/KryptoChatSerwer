@@ -15,7 +15,7 @@ public class User {
 
     private String password;
 
-    @Column(name = "groupId", nullable = true)
+    @Column(nullable = true)
     private Long groupId;
 
     public User() {}
