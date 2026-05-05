@@ -30,6 +30,8 @@ class UserToken {
         this.groupId = groupId;
     }
 
+    public UserToken() {}
+
     public Long getId() {
         return id;
     }

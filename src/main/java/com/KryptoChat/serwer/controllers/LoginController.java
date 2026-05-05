@@ -17,22 +17,28 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody RegisterRequest request) {
+        User user;
+        LoginResponse response;
+        try {
+            user = userService.login(
+                    request.getUsername(),
+                    request.getPassword()
+            );
+            UserToken token = new UserToken(
+                    user.getId(),
+                    user.getUsername(),
+                    user.getGroupId()
+            );
 
-        User user = userService.login(
-                request.getUsername(),
-                request.getPassword()
-        );
+            response = new LoginResponse(
+                    token,
+                    "Zalogowano"
+            );
+            System.out.println(response.getUserToken().getUsername());
 
-        UserToken token = new UserToken(
-                user.getId(),
-                user.getUsername(),
-                user.getGroupId()
-        );
-
-        LoginResponse response = new LoginResponse(
-                token,
-                "Zalogowano"
-        );
+        } catch (RuntimeException e) {
+            response = new LoginResponse(new UserToken(), e.getMessage());
+        }
 
         return ResponseEntity.ok(response);
     }
