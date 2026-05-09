@@ -1,4 +1,5 @@
 package com.KryptoChat.serwer.services;
+
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.KryptoChat.serwer.repositories.*;
@@ -15,6 +16,9 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * Rejestracja nowego użytkownika
+     */
     public void register(String username, String password) {
 
         if (userRepository.existsByUsername(username)) {
@@ -27,14 +31,27 @@ public class UserService {
         userRepository.save(user);
     }
 
+    /**
+     * Logowanie użytkownika
+     */
     public User login(String username, String password) {
 
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("Nie ma takiego użytkownika"));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Nie ma takiego użytkownika"));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("Błędne hasło");
         }
 
         return user;
+    }
+
+    /**
+     * Pobranie użytkownika po username
+     * (używane np. w GroupController)
+     */
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika"));
     }
 }
