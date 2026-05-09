@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import com.KryptoChat.serwer.services.*;
 import com.KryptoChat.serwer.entities.*;
 import com.KryptoChat.serwer.repositories.GroupRepository;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/groups")
@@ -30,9 +31,7 @@ public class GroupController {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new RuntimeException("Nie znaleziono grupy"));
 
-        return ResponseEntity.ok(
-                new GroupResponse(groupId, group.getKod(), "Utworzono grupę")
-        );
+        return ResponseEntity.ok(new GroupResponse(groupId, group.getKod(), "Utworzono grupę"));
     }
 
     @PostMapping("/join")
@@ -45,8 +44,22 @@ public class GroupController {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new RuntimeException("Nie znaleziono grupy"));
 
-        return ResponseEntity.ok(
-                new GroupResponse(groupId, group.getKod(), "Dołączono do grupy")
-        );
+        return ResponseEntity.ok(new GroupResponse(groupId, group.getKod(), "Dołączono do grupy"));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<GroupDetailsResponse> getGroup(@PathVariable Long id) {
+
+        Group group = groupRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono grupy"));
+
+        List<UserResponse> users = group.getUsers()
+                .stream()
+                .map(user -> new UserResponse(user.getId(), user.getUsername()))
+                .toList();
+
+        GroupDetailsResponse response = new GroupDetailsResponse(group.getId(), group.getGroupName(), group.getKod(), users);
+
+        return ResponseEntity.ok(response);
     }
 }

@@ -15,8 +15,9 @@ public class User {
 
     private String password;
 
-    @Column(nullable = true)
-    private Long groupId;
+    @ManyToOne
+    @JoinColumn(name = "group_id")
+    private Group group;
 
     public User() {}
 
@@ -25,14 +26,31 @@ public class User {
         this.password = password;
     }
 
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+    public String getUsername() {
+        return username;
+    }
 
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-    public void setGroupId(Long groupId) { this.groupId = groupId; }
-    public Long getGroupId() { return groupId; }
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
 }

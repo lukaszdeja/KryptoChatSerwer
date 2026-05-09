@@ -27,7 +27,7 @@ public class GroupService {
         Group group = new Group(name, code);
         groupRepository.save(group);
 
-        user.setGroupId(group.getId());
+        user.setGroup(group);
         userRepository.save(user);
 
         return group.getId();
@@ -39,7 +39,7 @@ public class GroupService {
         Group group = groupRepository.findByKod(code)
                 .orElseThrow(() -> new RuntimeException("Nie znaleziono grupy"));
 
-        user.setGroupId(group.getId());
+        user.setGroup(group);
         userRepository.save(user);
 
         return group.getId();

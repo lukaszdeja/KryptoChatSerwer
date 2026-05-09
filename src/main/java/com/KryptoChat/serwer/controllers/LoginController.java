@@ -20,7 +20,7 @@ public class LoginController {
         User user;
         LoginResponse response;
             user = userService.login(request.getUsername(), request.getPassword());
-            UserToken token = new UserToken(user.getId(), user.getUsername(), user.getGroupId());
+            UserToken token = new UserToken(user.getId(), user.getUsername(), user.getGroup().getId());
 
             response = new LoginResponse(token, "Zalogowano");
             System.out.println(response.getUserToken().getUsername());
