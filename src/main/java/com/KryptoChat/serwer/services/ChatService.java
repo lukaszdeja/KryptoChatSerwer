@@ -15,7 +15,7 @@ public class ChatService {
         this.messageRepository = messageRepository;
     }
 
-    public MessageList getMessages(Long groupId) {
+    public MessageList loadMessages(Long groupId) {
 
         List<Message> messages = messageRepository.findByGroupId(groupId);
 
