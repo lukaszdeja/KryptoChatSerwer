@@ -2,16 +2,18 @@ package com.KryptoChat.serwer.controllers;
 
 public class LoginResponse {
 
-    private UserToken userToken;
+    private UserCredentials userCredentials;
     private String message;
+    private String jwt;
 
-    public LoginResponse(UserToken userToken, String message) {
-        this.userToken = userToken;
+    public LoginResponse(UserCredentials userCredentials, String jwt, String message) {
+        this.userCredentials = userCredentials;
         this.message = message;
+        this.jwt = jwt;
     }
 
-    public UserToken getUserToken() {
-        return userToken;
+    public UserCredentials getUserCredentials() {
+        return userCredentials;
     }
 
     public String getMessage() {
@@ -19,18 +21,18 @@ public class LoginResponse {
     }
 }
 
-class UserToken {
+class UserCredentials {
     private Long id;
     private String username;
     private Long groupId;
 
-    public UserToken(Long id, String username, Long groupId) {
+    public UserCredentials(Long id, String username, Long groupId) {
         this.id = id;
         this.username = username;
         this.groupId = groupId;
     }
 
-    public UserToken() {}
+    public UserCredentials() {}
 
     public Long getId() {
         return id;

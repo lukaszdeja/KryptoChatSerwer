@@ -46,6 +46,12 @@ public class UserService {
         return user;
     }
 
+    public User authentification(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return user;
+    }
+
     /**
      * Pobranie użytkownika po username
      * (używane np. w GroupController)
