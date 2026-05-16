@@ -58,11 +58,11 @@ public class Message {
         this.groupId = groupId;
     }
 
-    public LocalDateTime getTimestamp() {
+    public LocalDateTime getSend_time() {
         return send_time;
     }
 
-    public void setTimestamp(LocalDateTime send_time) {
+    public void setSend_time(LocalDateTime send_time) {
         this.send_time = send_time;
     }
 }
