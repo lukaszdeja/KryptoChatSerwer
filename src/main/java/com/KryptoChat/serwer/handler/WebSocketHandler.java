@@ -1,4 +1,6 @@
 package com.KryptoChat.serwer.handler;
+import com.KryptoChat.serwer.entities.User;
+import com.KryptoChat.serwer.repositories.UserRepository;
 import com.KryptoChat.serwer.services.MessageService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -20,8 +22,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final Map<Long, Set<WebSocketSession>> chats = new ConcurrentHashMap<>();
 
     private final MessageService messageService;
+    private final UserRepository userRepository;
 
-    public WebSocketHandler(MessageService messageService) {
+    public WebSocketHandler(UserRepository userRepository, MessageService messageService) {
+        this.userRepository = userRepository;
         this.messageService = messageService;
     }
 
@@ -45,8 +49,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
         Message msg = mapper.readValue(message.getPayload(), Message.class);
 
         String userId = (String) session.getAttributes().get("userId");
+        Long userIdLong = Long.valueOf(userId);
 
-        msg.setSender(userId);
+        String username = userRepository.findById(userIdLong)
+                .map(User::getUsername)
+                .orElse("unknown");
+        msg.setSender(username);
         msg.setSend_time(LocalDateTime.now());
 
         Message saved = messageService.save(msg);
