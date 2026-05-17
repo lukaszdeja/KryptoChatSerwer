@@ -48,7 +48,7 @@ public class LoginController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<User> me(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<UserCredentials> me(@RequestHeader("Authorization") String authHeader) {
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(401).build();
@@ -63,7 +63,12 @@ public class LoginController {
 
         Long userId = jwtService.extractUserId(token);
         User user = userService.authentification(userId);
+        Long groupId = null;
+        if (user.getGroup() != null) {
+            groupId = user.getGroup().getId();
+        }
 
-        return ResponseEntity.ok(user);
+
+        return ResponseEntity.ok(new UserCredentials(user.getId(), user.getUsername(), groupId));
     }
 }
