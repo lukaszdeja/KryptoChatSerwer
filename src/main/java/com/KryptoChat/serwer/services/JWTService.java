@@ -36,7 +36,7 @@ public class JWTService {
         return Jwts.builder()
                 .subject(user.getId().toString())
                 .claim("username", user.getUsername())
-                .claim("groupId", user.getGroup().getId())
+                .claim("groupId", user.getGroup() != null ? user.getGroup().getId() : null)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(key)
