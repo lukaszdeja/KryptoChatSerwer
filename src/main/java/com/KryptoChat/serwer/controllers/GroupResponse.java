@@ -17,6 +17,8 @@ public class GroupResponse {
     // gettery
     public String getJwt() { return this.jwt; }
     public String getMessage() { return message; }
+    public UserCredentials getUserCredentials() { return this.userCredentials;}
+    public void setUserCredentials(UserCredentials userCredentials) { this.userCredentials = userCredentials;}
 
     // settery
     public void setJwt(String jwt) {this.jwt = jwt;}
