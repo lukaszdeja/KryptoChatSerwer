@@ -2,25 +2,23 @@ package com.KryptoChat.serwer.controllers;
 
 public class GroupResponse {
 
-    private Long groupId;
-    private String message;
-    private String code;
 
+    private String message;
+    private String jwt;
+    private UserCredentials userCredentials;
     public GroupResponse() {}
 
-    public GroupResponse(Long groupId, String code, String message) {
-        this.groupId = groupId;
-        this.code = code;
+    public GroupResponse(String jwt, UserCredentials userCredentials, String message) {
+        this.jwt = jwt;
+        this.userCredentials = userCredentials;
         this.message = message;
     }
 
     // gettery
-    public Long getGroupId() { return groupId; }
-    public String getCode() { return code; }
+    public String getJwt() { return this.jwt; }
     public String getMessage() { return message; }
 
     // settery
-    public void setGroupId(Long groupId) { this.groupId = groupId; }
-    public void setCode(String code) { this.code = code; }
+    public void setJwt(String jwt) {this.jwt = jwt;}
     public void setMessage(String message) { this.message = message; }
 }

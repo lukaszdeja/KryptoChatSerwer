@@ -22,29 +22,61 @@ public class GroupController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<GroupResponse> createGroup(@RequestBody CreateGroupRequest request) {
+    public ResponseEntity<GroupResponse> createGroup(@RequestHeader("Authorization") String header, @RequestBody CreateGroupRequest request) {
 
-        User user = userService.findByUsername(request.getUsername());
+        if (header == null || !header.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).build();
+        }
+
+        String token = header.substring(7);
+        JWTService jwtService = new JWTService();
+        if (!jwtService.isTokenValid(token)) {
+            return ResponseEntity.status(401).build();
+        }
+        Long userId = jwtService.extractUserId(token);
+
+        User user = userService.authentification(userId);
 
         Long groupId = groupService.createGroup(request.getGroupName(), user);
-
+        String newToken = null;
+        String message = "Nie udalo sie utworzyc grupy";
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new RuntimeException("Nie znaleziono grupy"));
 
-        return ResponseEntity.ok(new GroupResponse(groupId, group.getKod(), "Utworzono grupę"));
+        if (group != null) {
+            newToken = jwtService.generateToken(user);
+            message = "Uwtorzono grupe";
+        }
+
+        return ResponseEntity.ok(new GroupResponse(newToken, new UserCredentials(user.getId(), user.getUsername(), user.getGroup().getId()), message));
     }
 
     @PostMapping("/join")
-    public ResponseEntity<GroupResponse> joinGroup(@RequestBody JoinGroupRequest request) {
+    public ResponseEntity<GroupResponse> joinGroup(@RequestHeader("Authorization") String header, @RequestBody JoinGroupRequest request) {
+        if (header == null || !header.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).build();
+        }
 
-        User user = userService.findByUsername(request.getUsername());
+        String token = header.substring(7);
+        JWTService jwtService = new JWTService();
+        if (!jwtService.isTokenValid(token)) {
+            return ResponseEntity.status(401).build();
+        }
+        Long userId = jwtService.extractUserId(token);
+
+        User user = userService.authentification(userId);
 
         Long groupId = groupService.joinGroup(request.getCode(), user);
-
+        String newToken = null;
+        String message = "Nie udalo sie utworzyc grupy";
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new RuntimeException("Nie znaleziono grupy"));
+        if (group != null) {
+            newToken = jwtService.generateToken(user);
+            message = "Dolaczono do grupy";
+        }
 
-        return ResponseEntity.ok(new GroupResponse(groupId, group.getKod(), "Dołączono do grupy"));
+        return ResponseEntity.ok(new GroupResponse(newToken, new UserCredentials(user.getId(), user.getUsername(), user.getGroup().getId()), message));
     }
 
     @GetMapping("/{id}")
