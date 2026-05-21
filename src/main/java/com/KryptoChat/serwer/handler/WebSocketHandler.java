@@ -1,6 +1,7 @@
 package com.KryptoChat.serwer.handler;
 import com.KryptoChat.serwer.entities.User;
 import com.KryptoChat.serwer.repositories.UserRepository;
+import com.KryptoChat.serwer.services.JWTService;
 import com.KryptoChat.serwer.services.MessageService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -9,8 +10,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,12 +35,35 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         try {
-            URI uri = session.getUri();
-            String query = uri.getQuery();
-            String userId = query.split("=")[1];
+            List<String> authHeaders = session.getHandshakeHeaders().get("Authorization");
+
+            if (authHeaders == null || authHeaders.isEmpty()) {
+                session.close(CloseStatus.NOT_ACCEPTABLE);
+                return;
+            }
+
+            String auth = authHeaders.getFirst();
+
+            if (!auth.startsWith("Bearer ")) {
+                session.close(CloseStatus.NOT_ACCEPTABLE);
+                return;
+            }
+
+            String token = auth.substring(7);
+
+            JWTService jwtService = new JWTService();
+
+            if (!jwtService.isTokenValid(token)) {
+                session.close(CloseStatus.NOT_ACCEPTABLE);
+                return;
+            }
+
+            Long userId = jwtService.extractUserId(token);
+
             session.getAttributes().put("userId", userId);
+
             System.out.println("User connected: " + userId);
-        } catch (NullPointerException e) {
+        } catch (IOException | NullPointerException e) {
             e.printStackTrace();
         }
     }
@@ -48,8 +74,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         Message msg = mapper.readValue(message.getPayload(), Message.class);
 
-        String userId = (String) session.getAttributes().get("userId");
-        Long userIdLong = Long.valueOf(userId);
+        Long userIdLong = (Long) session.getAttributes().get("userId");
 
         String username = userRepository.findById(userIdLong)
                 .map(User::getUsername)
