@@ -10,17 +10,32 @@ import com.KryptoChat.serwer.entities.Message;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Kontroler odpowiedzialny za żądanie REST zaczytania wiadomości z bazy danych
+ */
 @RestController
 @RequestMapping("api/messages")
 public class MessageController {
     private final ChatService chatService;
     private final UserService userService;
 
+    /**
+     * Konstruktor inicjujący pola klasy
+     * @param userService
+     * @param chatService
+     */
     public MessageController(UserService userService, ChatService chatService) {
         this.userService = userService;
         this.chatService = chatService;
     }
 
+    /**
+     * Metoda obsługująca żądanie REST zaczytania wiadomości
+     * Waliduje token, na jego podstawie sprawdza zalogowanego użytkownika, pobiera jego id grupy
+     * Na podstawie id grupy pobiera z bazy danych wiadomości z tej grupy i zwraca ich listę opakowaną klasą MessageList
+     * @param header
+     * @return ResponseEntity
+     */
     @GetMapping("/")
     public ResponseEntity<MessageList> loadMessages(@RequestHeader("Authorization")  String header) {
         if (header == null || !header.startsWith("Bearer ")) {

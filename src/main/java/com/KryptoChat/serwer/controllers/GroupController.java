@@ -7,6 +7,10 @@ import com.KryptoChat.serwer.entities.*;
 import com.KryptoChat.serwer.repositories.GroupRepository;
 import java.util.List;
 
+/**
+ * Klasa obsługująca backendowy kontroler REST API dla widoku grup na kliencie, obsługuje żądania REST
+ */
+
 @RestController
 @RequestMapping("/api/groups")
 public class GroupController {
@@ -15,12 +19,25 @@ public class GroupController {
     private final UserService userService;
     private final GroupRepository groupRepository;
 
+    /**
+     * Konstruktor inicjujący pola klasy
+     * @param groupService
+     * @param userService
+     * @param groupRepository
+     */
     public GroupController(GroupService groupService, UserService userService, GroupRepository groupRepository) {
         this.groupService = groupService;
         this.userService = userService;
         this.groupRepository = groupRepository;
     }
 
+    /**
+     * Metoda odpowiedzialna za utworzenie grupy w bazie danych i przypisanie idGrupy tworzącemu ją użytkownikowi
+     * Waliduje token jwt przesłany w headerze, wykonuje operacje na bazie danych i zwraca odpowiedź serwera - nowy token wraz z DTO grupy
+     * @param header
+     * @param request
+     * @return ResponseEntity<GroupResponse>
+     */
     @PostMapping("/create")
     public ResponseEntity<GroupResponse> createGroup(@RequestHeader("Authorization") String header, @RequestBody CreateGroupRequest request) {
 
@@ -51,6 +68,13 @@ public class GroupController {
         return ResponseEntity.ok(new GroupResponse(newToken, new UserCredentials(user.getId(), user.getUsername(), user.getGroup().getId()), message));
     }
 
+    /**
+     * Metoda obsługująca procedurę dołączania do grupy po kodzie dołączenia, waliduje token jwt, weryfikuje kod
+     * Jeśli jest poprawny przypisuje id grupy użytkownikowi w bazie oraz zwraca informacje o dołączeniu na klienta
+     * @param header
+     * @param request
+     * @return
+     */
     @PostMapping("/join")
     public ResponseEntity<GroupResponse> joinGroup(@RequestHeader("Authorization") String header, @RequestBody JoinGroupRequest request) {
         if (header == null || !header.startsWith("Bearer ")) {
@@ -79,6 +103,12 @@ public class GroupController {
         return ResponseEntity.ok(new GroupResponse(newToken, new UserCredentials(user.getId(), user.getUsername(), user.getGroup().getId()), message));
     }
 
+    /**
+     * Metoda obsługująca zapytania typu GET, pobiera członków grupy, do której należy użytkownik, jeśli należy do jakiejs
+     * Następnie zwraca listę użytkowników z tej grupy w formie List. Waliduje jwt
+     * @param header
+     * @return
+     */
     @GetMapping("/")
     public ResponseEntity<GroupDetailsResponse> getGroup(@RequestHeader("Authorization")  String header) {
 

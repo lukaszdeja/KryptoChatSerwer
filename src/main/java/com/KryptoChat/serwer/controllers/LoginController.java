@@ -15,17 +15,29 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-
+/**
+ * Klasa realizująca kontroler Logowania obsługujący żądania REST
+ */
 @RestController
 @RequestMapping("/api")
 public class LoginController {
 
     private final UserService userService;
 
+    /**
+     * Konstruktor inicjujący pole serwisu użytkownika
+     * @param userService
+     */
     public LoginController(UserService userService) {
         this.userService = userService;
     }
 
+    /**
+     * Metoda obsługująca żądania post logowania, sprawdza login i hasło w bazie danych
+     * Jeżeli są poprawne tworzy zwracany obiekt zawierający token jwt oraz credentials potrzebne frontendowi
+     * @param request
+     * @return
+     */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody RegisterRequest request) {
         User user;
@@ -47,6 +59,12 @@ public class LoginController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Metoda obsługująca endpoint get /me, czyli autentyfikację tokenu po uruchomieniu aplikacji
+     * Jeżeli token jest prawidłowy, zwróci obiekt zalogowanego użytkownika
+     * @param authHeader
+     * @return ResponseEntity
+     */
     @GetMapping("/me")
     public ResponseEntity<UserCredentials> me(@RequestHeader("Authorization") String authHeader) {
 
