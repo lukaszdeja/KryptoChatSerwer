@@ -79,15 +79,33 @@ public class GroupController {
         return ResponseEntity.ok(new GroupResponse(newToken, new UserCredentials(user.getId(), user.getUsername(), user.getGroup().getId()), message));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<GroupDetailsResponse> getGroup(@PathVariable Long id) {
+    @GetMapping("/")
+    public ResponseEntity<GroupDetailsResponse> getGroup(@RequestHeader("Authorization")  String header) {
 
-        Group group = groupRepository.findById(id)
+        if (header == null || !header.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).build();
+        }
+
+        String token = header.substring(7);
+
+        JWTService jwtService = new JWTService();
+
+        if (!jwtService.isTokenValid(token)) {
+            return ResponseEntity.status(401).build();
+        }
+
+        Long userId = jwtService.extractUserId(token);
+
+        User user = userService.authentification(userId);
+
+        Long groupId = user.getGroup().getId();
+
+        Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new RuntimeException("Nie znaleziono grupy"));
 
         List<UserResponse> users = group.getUsers()
                 .stream()
-                .map(user -> new UserResponse(user.getId(), user.getUsername()))
+                .map(u -> new UserResponse(u.getId(), u.getUsername()))
                 .toList();
 
         GroupDetailsResponse response = new GroupDetailsResponse(group.getId(), group.getGroupName(), group.getKod(), users);
