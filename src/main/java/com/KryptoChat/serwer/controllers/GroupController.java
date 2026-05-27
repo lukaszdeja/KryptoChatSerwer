@@ -54,7 +54,7 @@ public class GroupController {
 
         User user = userService.authentification(userId);
 
-        Long groupId = groupService.createGroup(request.getGroupName(), user);
+        Long groupId = groupService.createGroup(request.getGroupName(), user, request.getCreatorKey());
         String newToken = null;
         String message = "Nie udalo sie utworzyc grupy";
         Group group = groupRepository.findById(groupId)

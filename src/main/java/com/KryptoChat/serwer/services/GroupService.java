@@ -28,23 +28,22 @@ public class GroupService {
     }
 
     @Transactional
-    public Long createGroup(String groupName, User creator) {
+    public Long createGroup(String groupName, User creator, String encryptedCreatorKey) {
 
         Group group = new Group();
         group.setGroupName(groupName);
-        group.setKod(UUID.randomUUID().toString().substring(0, 8));
+        group.setKod(GroupCodeGenerator.generateCode());
 
         groupRepository.save(group);
-
-        String aesKey = generateAESKey();
 
         List<User> users = List.of(creator);
 
         for (User user : users) {
 
-            String encryptedKey = encryptRSA(aesKey, user.getPublicKey());
 
-            GroupKey gk = new GroupKey(group.getId(), user.getId(), encryptedKey);
+            GroupKey gk = new GroupKey(group.getId(), user.getId(), encryptedCreatorKey);
+
+            gk.setStatus("ACTIVE");
 
             groupKeyRepository.save(gk);
         }
@@ -54,7 +53,6 @@ public class GroupService {
 
         return group.getId();
     }
-
     @Transactional
     public Long joinGroup(String code, User user) {
 
@@ -64,32 +62,13 @@ public class GroupService {
         user.setGroup(group);
         userRepository.save(user);
 
-        String aesKey = getAESKeyForGroup(group.getId());
+        GroupKey gk = new GroupKey(group.getId(), user.getId(), null);
 
-        String encrypted = encryptRSA(aesKey, user.getPublicKey());
-
-        GroupKey gk = new GroupKey(group.getId(), user.getId(), encrypted);
+        gk.setStatus("PENDING");
 
         groupKeyRepository.save(gk);
 
         return group.getId();
     }
 
-    public String generateAESKey() {
-        try {
-            KeyGenerator generator = KeyGenerator.getInstance("AES");
-            generator.init(256);
-
-            SecretKey key = generator.generateKey();
-
-            return Base64.getEncoder().encodeToString(key.getEncoded());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private String getAESKeyForGroup(Long groupId) {
-        // tu cos ma byc
-        throw new RuntimeException("TODO: store group AES key securely");
-    }
 }

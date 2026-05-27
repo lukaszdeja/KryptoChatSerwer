@@ -7,6 +7,8 @@ public class CreateGroupRequest {
 
     private String groupName;
 
+    public String creatorKey;
+
     /**
      * Konstruktor bezparametrowy, konieczny dla deserializacji i serializacji
      */
@@ -23,4 +25,7 @@ public class CreateGroupRequest {
      * @param groupName - ustawiana nazwa grupy
      */
     public void setGroupName(String groupName) { this.groupName = groupName; }
+
+    public String getCreatorKey() { return creatorKey; }
+    public void setCreatorKey(String key) { creatorKey = key; }
 }

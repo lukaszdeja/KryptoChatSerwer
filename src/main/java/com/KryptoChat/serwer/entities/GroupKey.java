@@ -17,6 +17,8 @@ public class GroupKey {
     @Column(columnDefinition = "TEXT")
     private String encryptedGroupKey;
 
+    private String status;
+
     public GroupKey() {}
 
     public GroupKey(Long groupId, Long userId, String encryptedGroupKey) {
@@ -52,4 +54,8 @@ public class GroupKey {
     public void setEncryptedGroupKey(String encryptedGroupKey) {
         this.encryptedGroupKey = encryptedGroupKey;
     }
+
+    public String getStatus() { return status; }
+
+    public void setStatus(String status) { this.status = status; }
 }
