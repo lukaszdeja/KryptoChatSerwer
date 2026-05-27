@@ -40,11 +40,9 @@ public class GroupService {
 
         for (User user : users) {
 
-            System.out.println("2 " + encryptedCreatorKey);
             GroupKey gk = new GroupKey(group.getId(), user.getId(), encryptedCreatorKey);
 
             gk.setStatus("ACTIVE");
-            System.out.println("3 " + encryptedCreatorKey);
             groupKeyRepository.save(gk);
         }
 
