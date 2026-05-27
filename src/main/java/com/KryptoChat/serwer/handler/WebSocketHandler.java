@@ -23,13 +23,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
     private final Map<Long, Set<WebSocketSession>> chats = new ConcurrentHashMap<>();
-
+    private final JWTService jwtService;
     private final MessageService messageService;
     private final UserRepository userRepository;
 
-    public WebSocketHandler(UserRepository userRepository, MessageService messageService) {
+    public WebSocketHandler(UserRepository userRepository, MessageService messageService, JWTService jwtService) {
         this.userRepository = userRepository;
         this.messageService = messageService;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -51,7 +52,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             String token = auth.substring(7);
 
-            JWTService jwtService = new JWTService();
 
             if (!jwtService.isTokenValid(token)) {
                 session.close(CloseStatus.NOT_ACCEPTABLE);
