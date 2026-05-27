@@ -21,15 +21,17 @@ public class RegisterController {
     }
 
     /**
-     * Metoda zappisująca użytkownika w bazie danych i zwracająca odpowiedź serwera
-     * @param request
+     * Metoda zapisująca użytkownika w bazie danych
+     * wraz z publicznym kluczem RSA
+     * i zwracająca odpowiedź serwera
+     * @param request request rejestracji
      * @return ResponseEntity
      */
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
-
-        userService.register(request.getUsername(), request.getPassword());
-
+    public ResponseEntity<String> register(
+            @RequestBody RegisterRequest request
+    ) {
+        userService.register(request.getUsername(), request.getPassword(), request.getPublicKey());
         return ResponseEntity.ok("Użytkownik sie zarejestrował");
     }
 }

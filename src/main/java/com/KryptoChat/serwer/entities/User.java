@@ -19,6 +19,9 @@ public class User {
     @JoinColumn(name = "group_id")
     private Group group;
 
+    @Column(columnDefinition = "TEXT")
+    private String publicKey;
+
     public User() {}
 
     public User(String username, String password) {
@@ -52,5 +55,13 @@ public class User {
 
     public void setGroup(Group group) {
         this.group = group;
+    }
+
+    public String getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
     }
 }

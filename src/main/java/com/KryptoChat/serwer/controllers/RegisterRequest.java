@@ -7,6 +7,8 @@ public class RegisterRequest {
 
     private String username;
     private String password;
+    private String publicKey;
+
     // getter nazwy użytkownika
     public String getUsername() {
         return username;
@@ -22,5 +24,13 @@ public class RegisterRequest {
     //setter hasła
     public void setPassword(String password) {
         this.password = password;
+    }
+    //getter klucza publicznego
+    public String getPublicKey() {
+        return publicKey;
+    }
+    //setter klucza publicznego
+    public void setPublicKey(String key) {
+        this.publicKey = key;
     }
 }
