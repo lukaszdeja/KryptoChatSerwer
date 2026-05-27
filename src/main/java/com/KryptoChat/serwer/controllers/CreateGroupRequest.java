@@ -12,7 +12,7 @@ public class CreateGroupRequest {
     /**
      * Konstruktor bezparametrowy, konieczny dla deserializacji i serializacji
      */
-    CreateGroupRequest() {}
+    public CreateGroupRequest() {}
 
     /**
      * Getter nazwy grupy

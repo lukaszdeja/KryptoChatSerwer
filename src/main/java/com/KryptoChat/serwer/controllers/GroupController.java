@@ -53,7 +53,7 @@ public class GroupController {
         Long userId = jwtService.extractUserId(token);
 
         User user = userService.authentification(userId);
-
+        System.out.println("1 " + request.getCreatorKey());
         Long groupId = groupService.createGroup(request.getGroupName(), user, request.getCreatorKey());
         String newToken = null;
         String message = "Nie udalo sie utworzyc grupy";
