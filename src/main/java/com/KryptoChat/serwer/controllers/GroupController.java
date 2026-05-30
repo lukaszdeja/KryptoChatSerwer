@@ -1,10 +1,13 @@
 package com.KryptoChat.serwer.controllers;
 
+import com.KryptoChat.serwer.repositories.GroupKeyRepository;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import com.KryptoChat.serwer.services.*;
 import com.KryptoChat.serwer.entities.*;
 import com.KryptoChat.serwer.repositories.GroupRepository;
+import com.KryptoChat.serwer.handler.WebSocketHandler;
+
 import java.util.List;
 
 /**
@@ -18,6 +21,8 @@ public class GroupController {
     private final GroupService groupService;
     private final UserService userService;
     private final GroupRepository groupRepository;
+    private final GroupKeyRepository groupKeyRepository;
+    private final WebSocketHandler webSocketHandler;
 
     /**
      * Konstruktor inicjujący pola klasy
@@ -25,10 +30,12 @@ public class GroupController {
      * @param userService
      * @param groupRepository
      */
-    public GroupController(GroupService groupService, UserService userService, GroupRepository groupRepository) {
+    public GroupController(GroupService groupService, UserService userService, GroupRepository groupRepository, GroupKeyRepository gkr, WebSocketHandler wsh) {
         this.groupService = groupService;
         this.userService = userService;
         this.groupRepository = groupRepository;
+        this.groupKeyRepository = gkr;
+        this.webSocketHandler = wsh;
     }
 
     /**
@@ -141,5 +148,53 @@ public class GroupController {
         GroupDetailsResponse response = new GroupDetailsResponse(group.getId(), group.getGroupName(), group.getKod(), users);
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/deliver-key")
+    public ResponseEntity<Void> deliverKey(@RequestHeader("Authorization") String header, @RequestBody DeliverKeyRequest request) {
+        if (header == null || !header.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).build();
+        }
+
+        String token = header.substring(7);
+        JWTService jwtService = new JWTService();
+        if (!jwtService.isTokenValid(token)) {
+            return ResponseEntity.status(401).build();
+        }
+        Long userId = jwtService.extractUserId(token);
+        User user = userService.authentification(userId);
+        Long groupId = user.getGroup().getId();
+        GroupKey gk = groupKeyRepository.findByGroupIdAndUserId(userId, groupId).orElseThrow();
+        if (!"PENDING".equals(gk.getStatus())) {
+            return ResponseEntity.badRequest().build();
+        }
+        gk.setEncryptedGroupKey(request.getEncryptedKey());
+        gk.setStatus("ACTIVE");
+        groupKeyRepository.save(gk);
+
+        webSocketHandler.notifyKeyReady(request.getTargetUserId());
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/my-key")
+    public ResponseEntity<String> getMyKey(@RequestHeader("Authorization") String header) {
+        if (header == null || !header.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).build();
+        }
+        String token = header.substring(7);
+        JWTService jwtService = new JWTService();
+        if (!jwtService.isTokenValid(token)) {
+            return ResponseEntity.status(401).build();
+        }
+        Long userId = jwtService.extractUserId(token);
+        User user = userService.authentification(userId);
+        Long groupId = user.getGroup().getId();
+
+        GroupKey gk = groupKeyRepository.findByGroupIdAndUserId(groupId, userId).orElseThrow();
+
+        if (!"ACTIVE".equals(gk.getStatus())) {
+            return ResponseEntity.status(202).body("PENDING");
+        }
+        return ResponseEntity.ok(gk.getEncryptedGroupKey());
     }
 }

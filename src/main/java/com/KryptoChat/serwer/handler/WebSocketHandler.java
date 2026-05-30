@@ -1,8 +1,11 @@
 package com.KryptoChat.serwer.handler;
+import com.KryptoChat.serwer.entities.GroupKey;
 import com.KryptoChat.serwer.entities.User;
+import com.KryptoChat.serwer.repositories.GroupKeyRepository;
 import com.KryptoChat.serwer.repositories.UserRepository;
 import com.KryptoChat.serwer.services.JWTService;
 import com.KryptoChat.serwer.services.MessageService;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.KryptoChat.serwer.entities.Message;
@@ -23,14 +26,17 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
     private final Map<Long, Set<WebSocketSession>> chats = new ConcurrentHashMap<>();
+    private final Map<Long, WebSocketSession> activeUsers = new ConcurrentHashMap<>();
     private final JWTService jwtService;
     private final MessageService messageService;
     private final UserRepository userRepository;
+    private final GroupKeyRepository groupKeyRepository;
 
-    public WebSocketHandler(UserRepository userRepository, MessageService messageService, JWTService jwtService) {
+    public WebSocketHandler(UserRepository userRepository, MessageService messageService, JWTService jwtService, GroupKeyRepository gkr) {
         this.userRepository = userRepository;
         this.messageService = messageService;
         this.jwtService = jwtService;
+        this.groupKeyRepository = gkr;
     }
 
     @Override
@@ -61,9 +67,71 @@ public class WebSocketHandler extends TextWebSocketHandler {
             Long userId = jwtService.extractUserId(token);
 
             session.getAttributes().put("userId", userId);
+            activeUsers.put(userId, session);
+            notifyPendingMembers(userId, session);
 
             System.out.println("User connected: " + userId);
         } catch (IOException | NullPointerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void notifyPendingMembers(Long userId, WebSocketSession session) {
+        try {
+            User user = userRepository.findById(userId).orElse(null);
+            if (user == null || user.getGroup() == null)  {
+                return;
+            }
+            Long groupId = user.getGroup().getId();
+            GroupKey myKey = groupKeyRepository.findByGroupIdAndUserId(groupId, userId).orElse(null);
+            if (myKey == null) return;
+
+            if ("ACTIVE".equals(myKey.getStatus())) {
+
+                List<GroupKey> pending = groupKeyRepository.findByGroupIdAndStatus(groupId, "PENDING");
+
+                for (GroupKey pendingKey : pending) {
+                    User pendingUser = userRepository.findById(pendingKey.getUserId()).orElse(null);
+                    if (pendingUser == null) continue;
+
+                    Map<String, Object> msg = Map.of(
+                            "type",      "KEY_REQUEST",
+                            "userId",    pendingUser.getId(),
+                            "username",  pendingUser.getUsername(),
+                            "publicKey", pendingUser.getPublicKey()
+                    );
+                    session.sendMessage(new TextMessage(mapper.writeValueAsString(msg)));
+                }
+
+            } else if ("PENDING".equals(myKey.getStatus())) {
+                Map<String, Object> msg = Map.of(
+                        "type",      "KEY_REQUEST",
+                        "userId",    user.getId(),
+                        "username",  user.getUsername(),
+                        "publicKey", user.getPublicKey()
+                );
+
+                List<GroupKey> activeKeys = groupKeyRepository.findByGroupIdAndStatus(groupId, "ACTIVE");
+
+                for (GroupKey activeKey : activeKeys) {
+                    WebSocketSession activeSession = activeUsers.get(activeKey.getUserId());
+                    if (activeSession != null && activeSession.isOpen()) {
+                        activeSession.sendMessage(new TextMessage(mapper.writeValueAsString(msg)));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void notifyKeyReady(Long userId) {
+        WebSocketSession session = activeUsers.get(userId);
+        if (session == null || !session.isOpen()) return;
+        try {
+            Map<String, String> msg = Map.of("type", "KEY_READY");
+            session.sendMessage(new TextMessage(mapper.writeValueAsString(msg)));
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -72,26 +140,20 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 
-        Message msg = mapper.readValue(message.getPayload(), Message.class);
-
-        Long userIdLong = (Long) session.getAttributes().get("userId");
-
-        String username = userRepository.findById(userIdLong)
-                .map(User::getUsername)
-                .orElse("unknown");
-        msg.setSender(username);
-        msg.setSend_time(LocalDateTime.now());
-
-        Message saved = messageService.save(msg);
-
-        Long groupId = saved.getGroupId();
-        chats.computeIfAbsent(groupId, k -> ConcurrentHashMap.newKeySet())
-                .add(session);
-        String json = mapper.writeValueAsString(saved);
-
-        for (WebSocketSession s : chats.get(groupId)) {
-            if (s.isOpen()) {
-                s.sendMessage(new TextMessage(json));
+        JsonNode node = mapper.readTree(message.getPayload());
+        String type = node.has("type") ? node.get("type").asText() : "CHAT";
+        if ("CHAT".equals(type)) {
+            Message msg = mapper.readValue(message.getPayload(), Message.class);
+            Long userIdLong = (Long) session.getAttributes().get("userId");
+            String username = userRepository.findById(userIdLong).map(User::getUsername).orElse("unknown");
+            msg.setSender(username);
+            msg.setSend_time(LocalDateTime.now());
+            Message saved = messageService.save(msg);
+            Long groupId = saved.getGroupId();
+            chats.computeIfAbsent(groupId, k -> ConcurrentHashMap.newKeySet()).add(session);
+            String json = mapper.writeValueAsString(saved);
+            for (WebSocketSession s : chats.get(groupId)) {
+                if (s.isOpen()) s.sendMessage(new TextMessage(json));
             }
         }
     }
@@ -100,7 +162,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
 
         chats.values().forEach(set -> set.remove(session));
-
+        Long userId = (Long) session.getAttributes().get("userId");
+        if (userId != null) {
+            activeUsers.remove(userId);
+        }
         System.out.println("User disconnected");
     }
 }
