@@ -31,7 +31,7 @@ public class RegisterController {
     public ResponseEntity<String> register(
             @RequestBody RegisterRequest request
     ) {
-        userService.register(request.getUsername(), request.getPassword(), request.getPublicKey());
+        userService.register(request.getUsername(), request.getPassword(), request.getPublicKey(), request.getEncryptedPrivateKey());
         return ResponseEntity.ok("Użytkownik sie zarejestrował");
     }
 }

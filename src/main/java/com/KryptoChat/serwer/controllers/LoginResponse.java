@@ -8,6 +8,8 @@ public class LoginResponse {
     private UserCredentials userCredentials;
     private String message;
     private String jwt;
+    private String encryptedPrivateKey;
+    private String publicKey;
 
     /**
      * Konstruktor inicjujący pola klasy
@@ -32,6 +34,14 @@ public class LoginResponse {
     public String getJwt() { return jwt;}
     //setter jwt
     public void setJwt(String jwt) { this.jwt = jwt;}
+
+    public String getEncryptedPrivateKey() { return encryptedPrivateKey; }
+
+    public void setEncryptedPrivateKey(String key) { encryptedPrivateKey = key; }
+
+    public String getPublicKey() { return publicKey; }
+
+    public void setPublicKey(String key) { publicKey = key; }
 }
 
 /**

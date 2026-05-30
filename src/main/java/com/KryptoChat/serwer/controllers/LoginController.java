@@ -42,20 +42,20 @@ public class LoginController {
     public ResponseEntity<LoginResponse> login(@RequestBody RegisterRequest request) {
         User user;
         LoginResponse response;
-            user = userService.login(request.getUsername(), request.getPassword());
-            Long groupId;
-            try {
-                groupId = user.getGroup().getId();
-            } catch (NullPointerException e) {
-                groupId = null;
-            }
-            UserCredentials res = new UserCredentials(user.getId(), user.getUsername(), groupId);
-            JWTService jwtService = new JWTService();
-            String token = jwtService.generateToken(user);
-            response = new LoginResponse(res, token, "Zalogowano");
-            System.out.println(response.getUserCredentials().getUsername());
-
-
+        user = userService.login(request.getUsername(), request.getPassword());
+        Long groupId;
+        try {
+            groupId = user.getGroup().getId();
+        } catch (NullPointerException e) {
+            groupId = null;
+        }
+        UserCredentials res = new UserCredentials(user.getId(), user.getUsername(), groupId);
+        JWTService jwtService = new JWTService();
+        String token = jwtService.generateToken(user);
+        response = new LoginResponse(res, token, "Zalogowano");
+        response.setEncryptedPrivateKey(user.getEncryptedPrivateKey());
+        response.setPublicKey(user.getPublicKey());
+        System.out.println(response.getUserCredentials().getUsername());
         return ResponseEntity.ok(response);
     }
 

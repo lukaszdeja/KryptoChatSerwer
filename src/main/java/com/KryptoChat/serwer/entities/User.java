@@ -22,6 +22,9 @@ public class User {
     @Column(columnDefinition = "TEXT")
     private String publicKey;
 
+    @Column(columnDefinition = "TEXT")
+    private String encryptedPrivateKey;
+
     public User() {}
 
     public User(String username, String password) {
@@ -64,4 +67,8 @@ public class User {
     public void setPublicKey(String publicKey) {
         this.publicKey = publicKey;
     }
+
+    public String getEncryptedPrivateKey() { return encryptedPrivateKey; }
+
+    public void setEncryptedPrivateKey(String key) { this.encryptedPrivateKey = key; }
 }

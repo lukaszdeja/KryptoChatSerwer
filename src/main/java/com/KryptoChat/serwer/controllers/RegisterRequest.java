@@ -8,6 +8,8 @@ public class RegisterRequest {
     private String username;
     private String password;
     private String publicKey;
+    private String encryptedPrivateKey;
+
 
     // getter nazwy użytkownika
     public String getUsername() {
@@ -33,4 +35,8 @@ public class RegisterRequest {
     public void setPublicKey(String key) {
         this.publicKey = key;
     }
+
+    public void setEncryptedPrivateKey(String key) { this.encryptedPrivateKey = key; }
+
+    public String getEncryptedPrivateKey() { return encryptedPrivateKey; }
 }

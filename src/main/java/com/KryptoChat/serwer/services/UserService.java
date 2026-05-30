@@ -20,7 +20,7 @@ public class UserService {
      * Rejestracja nowego użytkownika
      * Tworzy konto użytkownika oraz zapisuje jego publiczny klucz RSA
      */
-    public void register(String username, String password, String publicKey) {
+    public void register(String username, String password, String publicKey, String encryptedPrivateKey) {
 
         if (userRepository.existsByUsername(username)) {
             throw new RuntimeException("Użytkownik o podanej nazwie już istnieje");
@@ -31,6 +31,7 @@ public class UserService {
         User user = new User(username, hashedPassword);
 
         user.setPublicKey(publicKey);
+        user.setEncryptedPrivateKey(encryptedPrivateKey);
 
         userRepository.save(user);
     }
