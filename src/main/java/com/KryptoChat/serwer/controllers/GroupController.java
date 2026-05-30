@@ -164,7 +164,7 @@ public class GroupController {
         Long userId = jwtService.extractUserId(token);
         User user = userService.authentification(userId);
         Long groupId = user.getGroup().getId();
-        GroupKey gk = groupKeyRepository.findByGroupIdAndUserId(userId, groupId).orElseThrow();
+        GroupKey gk = groupKeyRepository.findByGroupIdAndUserId(groupId, request.getTargetUserId()).orElseThrow();
         if (!"PENDING".equals(gk.getStatus())) {
             return ResponseEntity.badRequest().build();
         }

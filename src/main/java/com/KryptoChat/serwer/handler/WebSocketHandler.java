@@ -7,6 +7,7 @@ import com.KryptoChat.serwer.services.JWTService;
 import com.KryptoChat.serwer.services.MessageService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.KryptoChat.serwer.entities.Message;
 import org.springframework.stereotype.Component;
@@ -143,7 +144,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
         JsonNode node = mapper.readTree(message.getPayload());
         String type = node.has("type") ? node.get("type").asText() : "CHAT";
         if ("CHAT".equals(type)) {
-            Message msg = mapper.readValue(message.getPayload(), Message.class);
+            node = node.deepCopy();
+            ((ObjectNode) node).remove("type");
+            Message msg = mapper.treeToValue(node, Message.class);
             Long userIdLong = (Long) session.getAttributes().get("userId");
             String username = userRepository.findById(userIdLong).map(User::getUsername).orElse("unknown");
             msg.setSender(username);
