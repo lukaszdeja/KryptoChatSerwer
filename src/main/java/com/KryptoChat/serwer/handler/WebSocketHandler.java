@@ -131,10 +131,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
         WebSocketSession session = activeUsers.get(userId);
         if (session == null) {
             System.out.println("Brak sesji");
+            return;
         }
 
         if(!session.isOpen()) {
             System.out.println("Sesja zamknieta");
+            return;
         }
         try {
             Map<String, String> msg = Map.of("type", "KEY_READY");
