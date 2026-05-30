@@ -127,11 +127,20 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
 
     public void notifyKeyReady(Long userId) {
+        System.out.println("notifyKeaReady lda usera" + userId);
         WebSocketSession session = activeUsers.get(userId);
-        if (session == null || !session.isOpen()) return;
+        if (session == null) {
+            System.out.println("Brak sesji");
+        }
+
+        if(!session.isOpen()) {
+            System.out.println("Sesja zamknieta");
+        }
         try {
             Map<String, String> msg = Map.of("type", "KEY_READY");
-            session.sendMessage(new TextMessage(mapper.writeValueAsString(msg)));
+            String json = mapper.writeValueAsString(msg);
+            System.out.println("Wysylam json: " + json);
+            session.sendMessage(new TextMessage(json));
         } catch (Exception e) {
             e.printStackTrace();
         }
