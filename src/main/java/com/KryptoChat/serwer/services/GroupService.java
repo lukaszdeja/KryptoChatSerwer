@@ -10,9 +10,6 @@ import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
-import com.KryptoChat.serwer.security.RSAEncryptionUtil;
-
-import static com.KryptoChat.serwer.security.RSAEncryptionUtil.encryptRSA;
 
 @Service
 public class GroupService {
