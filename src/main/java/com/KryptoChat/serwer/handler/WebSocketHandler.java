@@ -69,6 +69,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             session.getAttributes().put("userId", userId);
             activeUsers.put(userId, session);
+            User user = userRepository.findById(userId).orElse(null);
+            if (user != null && user.getGroup() != null) {
+                chats.computeIfAbsent(user.getGroup().getId(), k -> ConcurrentHashMap.newKeySet()).add(session);
+            }
             notifyPendingMembers(userId, session);
 
             System.out.println("User connected: " + userId);

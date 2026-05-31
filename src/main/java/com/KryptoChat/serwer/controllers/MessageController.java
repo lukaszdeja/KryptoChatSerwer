@@ -18,15 +18,17 @@ import java.util.ArrayList;
 public class MessageController {
     private final ChatService chatService;
     private final UserService userService;
+    private final JWTService jwtService;
 
     /**
      * Konstruktor inicjujący pola klasy
      * @param userService
      * @param chatService
      */
-    public MessageController(UserService userService, ChatService chatService) {
+    public MessageController(UserService userService, ChatService chatService, JWTService jwtService) {
         this.userService = userService;
         this.chatService = chatService;
+        this.jwtService = jwtService;
     }
 
     /**
@@ -44,7 +46,6 @@ public class MessageController {
 
         String token = header.substring(7);
 
-        JWTService jwtService = new JWTService();
 
         if (!jwtService.isTokenValid(token)) {
             return ResponseEntity.status(401).build();

@@ -23,13 +23,15 @@ import java.util.function.Function;
 public class LoginController {
 
     private final UserService userService;
+    private final JWTService jwtService;
 
     /**
      * Konstruktor inicjujący pole serwisu użytkownika
      * @param userService
      */
-    public LoginController(UserService userService) {
+    public LoginController(UserService userService, JWTService jwtService) {
         this.userService = userService;
+        this.jwtService = jwtService;
     }
 
     /**
@@ -50,7 +52,6 @@ public class LoginController {
             groupId = null;
         }
         UserCredentials res = new UserCredentials(user.getId(), user.getUsername(), groupId);
-        JWTService jwtService = new JWTService();
         String token = jwtService.generateToken(user);
         response = new LoginResponse(res, token, "Zalogowano");
         response.setEncryptedPrivateKey(user.getEncryptedPrivateKey());
@@ -73,7 +74,6 @@ public class LoginController {
         }
 
         String token = authHeader.substring(7);
-        JWTService jwtService = new JWTService();
 
         if (!jwtService.isTokenValid(token)) {
             return ResponseEntity.status(401).build();

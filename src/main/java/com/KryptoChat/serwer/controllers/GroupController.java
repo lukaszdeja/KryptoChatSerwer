@@ -23,6 +23,7 @@ public class GroupController {
     private final GroupRepository groupRepository;
     private final GroupKeyRepository groupKeyRepository;
     private final WebSocketHandler webSocketHandler;
+    private final JWTService jwtService;
 
     /**
      * Konstruktor inicjujący pola klasy
@@ -30,12 +31,13 @@ public class GroupController {
      * @param userService
      * @param groupRepository
      */
-    public GroupController(GroupService groupService, UserService userService, GroupRepository groupRepository, GroupKeyRepository gkr, WebSocketHandler wsh) {
+    public GroupController(GroupService groupService, UserService userService, GroupRepository groupRepository, GroupKeyRepository gkr, WebSocketHandler wsh, JWTService jwtService) {
         this.groupService = groupService;
         this.userService = userService;
         this.groupRepository = groupRepository;
         this.groupKeyRepository = gkr;
         this.webSocketHandler = wsh;
+        this.jwtService = jwtService;
     }
 
     /**
@@ -53,7 +55,6 @@ public class GroupController {
         }
 
         String token = header.substring(7);
-        JWTService jwtService = new JWTService();
         if (!jwtService.isTokenValid(token)) {
             return ResponseEntity.status(401).build();
         }
@@ -89,7 +90,6 @@ public class GroupController {
         }
 
         String token = header.substring(7);
-        JWTService jwtService = new JWTService();
         if (!jwtService.isTokenValid(token)) {
             return ResponseEntity.status(401).build();
         }
@@ -125,7 +125,6 @@ public class GroupController {
 
         String token = header.substring(7);
 
-        JWTService jwtService = new JWTService();
 
         if (!jwtService.isTokenValid(token)) {
             return ResponseEntity.status(401).build();
@@ -157,7 +156,6 @@ public class GroupController {
         }
 
         String token = header.substring(7);
-        JWTService jwtService = new JWTService();
         if (!jwtService.isTokenValid(token)) {
             return ResponseEntity.status(401).build();
         }
@@ -182,7 +180,6 @@ public class GroupController {
             return ResponseEntity.status(401).build();
         }
         String token = header.substring(7);
-        JWTService jwtService = new JWTService();
         if (!jwtService.isTokenValid(token)) {
             return ResponseEntity.status(401).build();
         }
