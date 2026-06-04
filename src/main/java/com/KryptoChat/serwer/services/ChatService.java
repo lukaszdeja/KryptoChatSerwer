@@ -1,5 +1,5 @@
 package com.KryptoChat.serwer.services;
-import com.KryptoChat.serwer.controllers.MessageList;
+import com.KryptoChat.serwer.DTO.MessageList;
 import com.KryptoChat.serwer.entities.Message;
 import org.springframework.stereotype.Service;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.KryptoChat.serwer.controllers;
+package com.KryptoChat.serwer.DTO;
 
 import java.util.List;
 

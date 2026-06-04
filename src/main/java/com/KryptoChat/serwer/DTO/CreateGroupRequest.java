@@ -1,4 +1,4 @@
-package com.KryptoChat.serwer.controllers;
+package com.KryptoChat.serwer.DTO;
 
 /**
  * Klasa definiująca obiekt utworzenia grupy, potrzebna do deserializacji ciała requesta

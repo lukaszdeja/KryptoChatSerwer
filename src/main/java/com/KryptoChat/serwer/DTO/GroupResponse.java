@@ -1,4 +1,4 @@
-package com.KryptoChat.serwer.controllers;
+package com.KryptoChat.serwer.DTO;
 
 /**
  * Klasa realizująca DTO dołączania bądź tworzenia grupy

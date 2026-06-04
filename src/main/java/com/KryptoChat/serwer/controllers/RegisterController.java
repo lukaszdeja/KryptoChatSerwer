@@ -1,4 +1,5 @@
 package com.KryptoChat.serwer.controllers;
+import com.KryptoChat.serwer.DTO.RegisterRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;

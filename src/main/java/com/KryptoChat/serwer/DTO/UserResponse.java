@@ -1,4 +1,4 @@
-package com.KryptoChat.serwer.controllers;
+package com.KryptoChat.serwer.DTO;
 
 /**
  * DTO zwracania danych uzytkownikow w liscie w grupie

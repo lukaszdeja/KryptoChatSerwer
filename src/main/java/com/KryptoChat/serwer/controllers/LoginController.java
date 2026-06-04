@@ -1,5 +1,8 @@
 package com.KryptoChat.serwer.controllers;
 
+import com.KryptoChat.serwer.DTO.LoginResponse;
+import com.KryptoChat.serwer.DTO.RegisterRequest;
+import com.KryptoChat.serwer.DTO.UserCredentials;
 import com.KryptoChat.serwer.repositories.UserRepository;
 import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Example;

@@ -1,5 +1,6 @@
 package com.KryptoChat.serwer.controllers;
 
+import com.KryptoChat.serwer.DTO.MessageList;
 import com.KryptoChat.serwer.entities.User;
 import com.KryptoChat.serwer.services.JWTService;
 import com.KryptoChat.serwer.services.UserService;

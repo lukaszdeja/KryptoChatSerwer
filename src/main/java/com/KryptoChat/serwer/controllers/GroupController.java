@@ -1,5 +1,6 @@
 package com.KryptoChat.serwer.controllers;
 
+import com.KryptoChat.serwer.DTO.*;
 import com.KryptoChat.serwer.repositories.GroupKeyRepository;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
