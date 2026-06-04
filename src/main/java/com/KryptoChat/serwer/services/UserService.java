@@ -57,12 +57,4 @@ public class UserService {
         return user;
     }
 
-    /**
-     * Pobranie użytkownika po username
-     * (używane np. w GroupController)
-     */
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika"));
-    }
 }
