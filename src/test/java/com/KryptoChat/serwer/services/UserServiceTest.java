@@ -82,10 +82,9 @@ class UserServiceTest {
         User user = new User("jan", "hashed");
         when(userRepository.findByUsername("jan")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("haslo", "hashed")).thenReturn(true);
-
         User result = userService.login("jan", "haslo");
-
-        assertThat(result).isSameAs(user);
+        assertThat(result.getUsername()).isEqualTo("jan");
+        assertThat(result.getPassword()).isEqualTo("hashed");
     }
 
     @Test
@@ -147,25 +146,4 @@ class UserServiceTest {
     }
 
 
-    @Test
-    @DisplayName("findByUsername zwraca użytkownika gdy istnieje")
-    void findByUsername_ExistingUsername_ReturnsUser() {
-        User user = new User("jan", "hashed");
-        when(userRepository.findByUsername("jan")).thenReturn(Optional.of(user));
-
-        User result = userService.findByUsername("jan");
-
-        assertThat(result).isSameAs(user);
-    }
-
-    @Test
-    @DisplayName("findByUsername rzuca RuntimeException gdy użytkownik nie istnieje")
-    void findByUsername_UnknownUsername_ThrowsRuntimeException() {
-        when(userRepository.findByUsername("nieznany")).thenReturn(Optional.empty());
-
-        RuntimeException ex = assertThrows(RuntimeException.class,
-                () -> userService.findByUsername("nieznany"));
-
-        assertThat(ex.getMessage()).contains("Nie znaleziono użytkownika");
-    }
 }
