@@ -103,7 +103,10 @@ public class GroupController {
         Long userId = jwtService.extractUserId(token);
 
         User user = userService.authentification(userId);
-        if (user.getGroup().getId() != null) {
+        if (user.getGroup() != null) {
+            if (user.getGroup().getId() != null) {
+                return ResponseEntity.status(409).build();
+            }
             return ResponseEntity.status(409).build();
         }
 
