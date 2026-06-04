@@ -1,6 +1,7 @@
 package com.KryptoChat.serwer.controllers;
 
 import com.KryptoChat.serwer.repositories.UserRepository;
+import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,9 +42,13 @@ public class LoginController {
      * @return
      */
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody RegisterRequest request) {
+    public ResponseEntity<LoginResponse> login(@RequestBody RegisterRequest request) throws BadRequestException {
         User user;
         LoginResponse response;
+        if (request.getUsername() == null || request.getUsername().isBlank()
+                || request.getPassword() == null || request.getPassword().isBlank()) {
+            throw new BadRequestException("Login i hasło są wymagane");
+        }
         user = userService.login(request.getUsername(), request.getPassword());
         Long groupId;
         try {

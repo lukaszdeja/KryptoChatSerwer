@@ -1,4 +1,5 @@
 package com.KryptoChat.serwer.controllers;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import com.KryptoChat.serwer.services.*;
@@ -29,7 +30,7 @@ public class RegisterController {
      */
     @PostMapping("/register")
     public ResponseEntity<String> register(
-            @RequestBody RegisterRequest request
+            @Valid  @RequestBody RegisterRequest request
     ) {
         userService.register(request.getUsername(), request.getPassword(), request.getPublicKey(), request.getEncryptedPrivateKey());
         return ResponseEntity.ok("Użytkownik sie zarejestrował");

@@ -163,11 +163,24 @@ public class WebSocketHandler extends TextWebSocketHandler {
             ((ObjectNode) node).remove("type");
             Message msg = mapper.treeToValue(node, Message.class);
             Long userIdLong = (Long) session.getAttributes().get("userId");
-            String username = userRepository.findById(userIdLong).map(User::getUsername).orElse("unknown");
+            Long groupId = (Long) session.getAttributes().get("groupId");
+            User user = userRepository.findById(userIdLong).orElseThrow(() -> new RuntimeException("User not found"));;
+            if (user == null) {
+                return;
+            }
+            String content = node.has("content") ? node.get("content").asText() : null;
+            if (content == null || content == "" || content.length() > 500) {
+                return;
+            }
+            if (user.getGroup().getId() == null || !user.getGroup().getId().equals(groupId)) {
+                return;
+            }
+            String username = user.getUsername();
             msg.setSender(username);
             msg.setSend_time(LocalDateTime.now());
+            msg.setGroupId(groupId);
+            msg.setContent(content);
             Message saved = messageService.save(msg);
-            Long groupId = saved.getGroupId();
             chats.computeIfAbsent(groupId, k -> ConcurrentHashMap.newKeySet()).add(session);
             String json = mapper.writeValueAsString(saved);
             for (WebSocketSession s : chats.get(groupId)) {

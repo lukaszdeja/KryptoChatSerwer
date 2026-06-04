@@ -48,7 +48,7 @@ public class GroupController {
      * @return ResponseEntity<GroupResponse>
      */
     @PostMapping("/create")
-    public ResponseEntity<GroupResponse> createGroup(@RequestHeader("Authorization") String header, @RequestBody CreateGroupRequest request) {
+    public ResponseEntity<?> createGroup(@RequestHeader("Authorization") String header, @RequestBody CreateGroupRequest request) {
 
         if (header == null || !header.startsWith("Bearer ")) {
             return ResponseEntity.status(401).build();
@@ -57,6 +57,10 @@ public class GroupController {
         String token = header.substring(7);
         if (!jwtService.isTokenValid(token)) {
             return ResponseEntity.status(401).build();
+        }
+
+        if (request.getGroupName().length() > 20 || request.getGroupName().length() < 3 || request.getGroupName() == null) {
+            return ResponseEntity.badRequest().body("Nazwa grupy musi miec minimum 3 znaki i maksimum 20");
         }
         Long userId = jwtService.extractUserId(token);
 
@@ -84,7 +88,7 @@ public class GroupController {
      * @return
      */
     @PostMapping("/join")
-    public ResponseEntity<GroupResponse> joinGroup(@RequestHeader("Authorization") String header, @RequestBody JoinGroupRequest request) {
+    public ResponseEntity<?> joinGroup(@RequestHeader("Authorization") String header, @RequestBody JoinGroupRequest request) {
         if (header == null || !header.startsWith("Bearer ")) {
             return ResponseEntity.status(401).build();
         }
@@ -93,13 +97,22 @@ public class GroupController {
         if (!jwtService.isTokenValid(token)) {
             return ResponseEntity.status(401).build();
         }
+        if (request.getCode() == null || request.getCode().length() != 6) {
+            return ResponseEntity.badRequest().body("Kod dolaczenia jest zlej dlugosci");
+        }
         Long userId = jwtService.extractUserId(token);
 
         User user = userService.authentification(userId);
+        if (user.getGroup().getId() != null) {
+            return ResponseEntity.status(409).build();
+        }
 
         Long groupId = groupService.joinGroup(request.getCode(), user);
+        if (groupId == null) {
+            return ResponseEntity.badRequest().body("Grupa nie istnieje");
+        }
         String newToken = null;
-        String message = "Nie udalo sie utworzyc grupy";
+        String message = "";
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new RuntimeException("Nie znaleziono grupy"));
         if (group != null) {

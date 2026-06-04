@@ -55,6 +55,9 @@ public class MessageController {
         User user = userService.authentification(userId);
 
         Long groupId = user.getGroup().getId();
+        if (groupId == null) {
+            return ResponseEntity.status(401).build();
+        }
         MessageList messages = chatService.loadMessages(groupId);
         return ResponseEntity.ok(messages);
     }
