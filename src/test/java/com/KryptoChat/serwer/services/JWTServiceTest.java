@@ -7,6 +7,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * UWAGA - ta klasa realizuje testy jednostkowe dla serwisu JWTService
+ * Klasa JWTService korzysta ze zmiennej środowiskowej JWT_SECRET
+ * Aby testy przeszły poprawnie, konieczne jest zdefiniowanie zmiennej środowiskowej JWT_SECRET jako ciąg znaków nie krótszy niz 32 znaki
+ */
 class JWTServiceTest {
 
     private JWTService jwtService;

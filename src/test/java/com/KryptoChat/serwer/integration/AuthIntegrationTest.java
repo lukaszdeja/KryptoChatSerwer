@@ -25,15 +25,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Konfiguracja testu integracyjnego
+ * Testy integracyjne logowania, rejestracji i autentyfikacji
+ * UWAGA - ta klasa korzysta z JWTService, który używa zmiennej środowiskowej JWT_SECRET
+ * Aby testy przeszły poprawnie, konieczne jest ustawienie zmiennej środowiskowej JWT_SECRET jako ciag znakow nie krotszy niz 32 znaki
  */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("integration")
 @Transactional
-@TestPropertySource(properties = {
-        "JWT_SECRET=1234567890123456789012345678901234"
-})
 class AuthIntegrationTest {
     /**
      * Zamockowane wykorzystywane obiekty
