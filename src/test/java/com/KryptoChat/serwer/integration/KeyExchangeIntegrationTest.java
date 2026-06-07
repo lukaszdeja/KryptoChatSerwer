@@ -484,7 +484,7 @@ class KeyExchangeIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("deliver-key: target ma status ACTIVE (nie PENDING) → 400 Bad Request")
+    @DisplayName("deliver-key: target ma status ACTIVE (nie PENDING) daje status 400 Bad Request")
     void deliverKey_targetAlreadyActive_returns400() throws Exception {
         userA = createUser("delivererA");
         userB = createUser("alreadyActiveB");
@@ -506,7 +506,7 @@ class KeyExchangeIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("deliver-key: brak nagłówka Authorization → 401")
+    @DisplayName("deliver-key: brak nagłówka Authorization daje status 401")
     void deliverKey_noAuth_returns401() throws Exception {
         DeliverKeyRequest req = new DeliverKeyRequest();
         req.setTargetUserId(99L);
@@ -520,7 +520,7 @@ class KeyExchangeIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("deliver-key: nieważny token → 401")
+    @DisplayName("deliver-key: nieważny token daje status 401")
     void deliverKey_invalidToken_returns401() throws Exception {
         DeliverKeyRequest req = new DeliverKeyRequest();
         req.setTargetUserId(99L);
@@ -536,7 +536,7 @@ class KeyExchangeIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("my-key: status PENDING → 202 z body 'PENDING'")
+    @DisplayName("my-key: status PENDING daje status 202 z body 'PENDING'")
     void myKey_pendingStatus_returns202WithPendingBody() throws Exception {
         userA = createUser("pendingKeyUser");
         group = createGroupWithMember(userA, "PENDING");
@@ -558,7 +558,7 @@ class KeyExchangeIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("my-key: status ACTIVE → 200 z zaszyfrowanym kluczem grupy")
+    @DisplayName("my-key: status ACTIVE daje status 200 z zaszyfrowanym kluczem grupy")
     void myKey_activeStatus_returns200WithEncryptedKey() throws Exception {
         userA = createUser("activeKeyUser");
         group = createGroupWithMember(userA, "ACTIVE");
@@ -611,7 +611,7 @@ class KeyExchangeIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("my-key: brak nagłówka Authorization → 400")
+    @DisplayName("my-key: brak nagłówka Authorization daje status 400")
     void myKey_noAuth_returns401() throws Exception {
         HttpResponse<String> response = get("/api/groups/my-key", null);
         assertThat(response.statusCode()).isEqualTo(400);
@@ -622,7 +622,7 @@ class KeyExchangeIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("my-key: nieważny token → 401")
+    @DisplayName("my-key: nieważny token daje status 401")
     void myKey_invalidToken_returns401() throws Exception {
         HttpResponse<String> response = get("/api/groups/my-key", "invalid.token.xyz");
         assertThat(response.statusCode()).isEqualTo(401);

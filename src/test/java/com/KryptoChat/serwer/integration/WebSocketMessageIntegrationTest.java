@@ -161,7 +161,7 @@ class WebSocketMessageIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("Połączenie bez nagłówka Authorization → sesja jest zamknięta")
+    @DisplayName("Połączenie bez nagłówka Authorization - sesja jest zamknięta")
     void connect_noAuthHeader_sessionIsClosed() throws Exception {
         StandardWebSocketClient client = new StandardWebSocketClient();
         List<String> received = new CopyOnWriteArrayList<>();
@@ -179,7 +179,7 @@ class WebSocketMessageIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("Połączenie z prawidłowym JWT → sesja pozostaje otwarta")
+    @DisplayName("Połączenie z prawidłowym JWT - sesja pozostaje otwarta")
     void connect_validToken_sessionStaysOpen() throws Exception {
         userA = createUser("userA");
         String jwt = jwtService.generateToken(userA);
@@ -195,7 +195,7 @@ class WebSocketMessageIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("Połączenie z losowym tokenem → sesja jest zamknięta")
+    @DisplayName("Połączenie z losowym tokenem - sesja jest zamknięta")
     void connect_invalidToken_sessionIsClosed() throws Exception {
         StandardWebSocketClient client = new StandardWebSocketClient();
         WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
@@ -216,7 +216,7 @@ class WebSocketMessageIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("Wiadomość CHAT → zapisana w bazie z poprawnym senderem i treścią")
+    @DisplayName("Wiadomość CHAT zapisana w bazie z poprawnym senderem i treścią")
     void chat_validMessage_savedToDatabase() throws Exception {
         userA = createUser("userA");
         group = createGroupWithMember(userA, "ACTIVE");
@@ -244,7 +244,7 @@ class WebSocketMessageIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("Wiadomość CHAT → nadawca pochodzi z bazy, nie z payloadu")
+    @DisplayName("Wiadomość CHAT - nadawca pochodzi z bazy, nie z payloadu")
     void chat_senderTakenFromDatabase_notFromPayload() throws Exception {
         userA = createUser("userA");
         group = createGroupWithMember(userA, "ACTIVE");
@@ -271,7 +271,7 @@ class WebSocketMessageIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("Wiadomość CHAT → broadcast do obu sesji w tej samej grupie")
+    @DisplayName("Wiadomość CHAT - broadcast do obu sesji w tej samej grupie")
     void chat_broadcastToAllSessionsInGroup() throws Exception {
         userA = createUser("userA");
         userB = createUser("userB");
@@ -302,7 +302,7 @@ class WebSocketMessageIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("Wiadomość CHAT → nie trafia do usera z innej grupy")
+    @DisplayName("Wiadomość CHAT - nie trafia do usera z innej grupy")
     void chat_notBroadcastedToOtherGroup() throws Exception {
         userA = createUser("userA");
         userB = createUser("userB");
@@ -334,7 +334,7 @@ class WebSocketMessageIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("Pusta treść wiadomości → nic nie zapisane w bazie")
+    @DisplayName("Pusta treść wiadomości - nic nie zapisane w bazie")
     void chat_emptyContent_notSaved() throws Exception {
         userA = createUser("userA");
         group = createGroupWithMember(userA, "ACTIVE");
@@ -354,7 +354,7 @@ class WebSocketMessageIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("Treść > 500 znaków → nic nie zapisane w bazie")
+    @DisplayName("Treść > 500 znaków - nic nie zapisane w bazie")
     void chat_contentTooLong_notSaved() throws Exception {
         userA = createUser("userA");
         group = createGroupWithMember(userA, "ACTIVE");
@@ -376,7 +376,7 @@ class WebSocketMessageIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("Rozłączenie → sesja usuwana z aktywnych użytkowników (kolejne wiadomości nie docierają)")
+    @DisplayName("Rozłączenie - sesja usuwana z aktywnych użytkowników (kolejne wiadomości nie docierają)")
     void disconnect_sessionRemovedFromActiveUsers() throws Exception {
         userA = createUser("userA");
         group = createGroupWithMember(userA, "ACTIVE");

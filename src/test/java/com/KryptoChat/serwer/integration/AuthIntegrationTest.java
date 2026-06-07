@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 class AuthIntegrationTest {
     /**
-     * Zamockowane wykorzystywane obiekty
+     * Wykorzystywane integrowane obiekty
      */
     @Autowired
     private MockMvc mockMvc;
@@ -49,10 +49,10 @@ class AuthIntegrationTest {
     /**
      * Stale wykorzystywane w testach
      */
-    private static final String USERNAME  = "testUser";
-    private static final String PASSWORD  = "Test1234!";
-    private static final String PUB_KEY   = "publicKeyRSA";
-    private static final String ENC_KEY   = "encryptedPrivateKey";
+    private static final String USERNAME = "testUser";
+    private static final String PASSWORD = "Test1234!";
+    private static final String PUB_KEY = "publicKeyRSA";
+    private static final String ENC_KEY = "encryptedPrivateKey";
 
     /**
      * Metoda pomocnicza budująca DTO Register Requesta
@@ -102,7 +102,7 @@ class AuthIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("Rejestracja: poprawne dane → 200 i user zapisany w bazie")
+    @DisplayName("Rejestracja: poprawne dane - status 200 i user zapisany w bazie")
     void register_validRequest_returns200AndPersistsUser() throws Exception {
         mockMvc.perform(post("/api/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -154,7 +154,7 @@ class AuthIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("Rejestracja: duplikat username → błąd ponowna próba rzuci wyjątek")
+    @DisplayName("Rejestracja: duplikat username - błąd ponowna próba rzuci wyjątek")
     void register_duplicateUsername_returnsErrorAndDoesNotDuplicate() throws Exception {
 
         mockMvc.perform(post("/api/register")
@@ -177,7 +177,7 @@ class AuthIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("Rejestracja: za krótkie hasło → 400, nic nie zapisano")
+    @DisplayName("Rejestracja: za krótkie hasło - BadRequest 400, nic nie zapisano")
     void register_passwordTooShort_returns400AndNoUserSaved() throws Exception {
         RegisterRequest req = buildValidRequest();
         req.setPassword("Ab1!");
@@ -195,7 +195,7 @@ class AuthIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("Rejestracja: hasło bez znaku specjalnego → 400, nic nie zapisano")
+    @DisplayName("Rejestracja: hasło bez znaku specjalnego - BadRequest 400, nic nie zapisano")
     void register_passwordWithoutSpecialChar_returns400AndNoUserSaved() throws Exception {
         RegisterRequest req = buildValidRequest();
         req.setPassword("TestPassword1");
@@ -213,9 +213,8 @@ class AuthIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("Logowanie: poprawne dane → 200, JWT w odpowiedzi, komunikat 'Zalogowano'")
+    @DisplayName("Logowanie: poprawne dane - status 200, JWT w odpowiedzi, komunikat 'Zalogowano'")
     void login_validCredentials_returns200WithJwt() throws Exception {
-        // najpierw rejestracja przez serwis — żeby mieć usera w bazie
         mockMvc.perform(post("/api/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(buildValidRequest())))
@@ -277,7 +276,7 @@ class AuthIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("Logowanie: nowy user (bez grupy) → groupId w odpowiedzi jest null")
+    @DisplayName("Logowanie: nowy user (bez grupy) - groupId w odpowiedzi jest null")
     void login_userWithoutGroup_groupIdIsNull() throws Exception {
         mockMvc.perform(post("/api/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -296,7 +295,7 @@ class AuthIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("Logowanie: błędne hasło → błąd serwera")
+    @DisplayName("Logowanie: błędne hasło - wyjątek")
     void login_wrongPassword_returnsError() throws Exception {
         mockMvc.perform(post("/api/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -318,7 +317,7 @@ class AuthIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("Logowanie: nieistniejący user → błąd serwera")
+    @DisplayName("Logowanie: nieistniejący user - Wyjątek")
     void login_unknownUser_returnsError() throws Exception {
         RegisterRequest req = buildValidRequest();
         req.setUsername("nieistniejacy");
@@ -335,7 +334,7 @@ class AuthIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("Logowanie: null username → 400 BadRequest")
+    @DisplayName("Logowanie: null username - 400 BadRequest")
     void login_nullUsername_returns400() throws Exception {
         RegisterRequest req = buildValidRequest();
         req.setUsername(null);
@@ -352,7 +351,7 @@ class AuthIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("/me: poprawny JWT → 200, poprawne dane usera")
+    @DisplayName("/me: poprawny JWT - 200, poprawne dane usera")
     void me_validToken_returns200WithUserData() throws Exception {
         String jwt = registerAndLogin(USERNAME);
 
@@ -368,7 +367,7 @@ class AuthIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("/me: poprawny JWT, user bez grupy → groupId jest null")
+    @DisplayName("/me: poprawny JWT, user bez grupy - groupId jest null")
     void me_validToken_userWithoutGroup_groupIdIsNull() throws Exception {
         String jwt = registerAndLogin(USERNAME);
 
@@ -384,7 +383,7 @@ class AuthIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("/me: brak nagłówka Authorization → BadRequest")
+    @DisplayName("/me: brak nagłówka Authorization - BadRequest")
     void me_noAuthHeader_returns401() throws Exception {
         mockMvc.perform(get("/api/me"))
                 .andExpect(status().isBadRequest());
@@ -396,7 +395,7 @@ class AuthIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("/me: nagłówek bez prefiksu 'Bearer ' → 401")
+    @DisplayName("/me: nagłówek bez prefiksu 'Bearer ' - 401")
     void me_headerWithoutBearerPrefix_returns401() throws Exception {
         mockMvc.perform(get("/api/me")
                         .header("Authorization", "nieberarer cos"))
@@ -408,7 +407,7 @@ class AuthIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("/me: losowy string jako token → 401")
+    @DisplayName("/me: losowy string jako token - 401")
     void me_invalidToken_returns401() throws Exception {
         mockMvc.perform(get("/api/me")
                         .header("Authorization", "Bearer to.nie.jest.prawidlowy.token"))
@@ -420,7 +419,7 @@ class AuthIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("/me: JWT z poprawną rejestracją → userId w /me zgadza się z bazą danych")
+    @DisplayName("/me: JWT z poprawną rejestracją - userId w /me zgadza się z bazą danych")
     void me_validToken_userIdMatchesDatabase() throws Exception {
         String jwt = registerAndLogin(USERNAME);
         Long dbId = userRepository.findByUsername(USERNAME).orElseThrow().getId();
@@ -440,7 +439,7 @@ class AuthIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("Pełny przepływ: rejestracja → logowanie → /me zwraca spójne dane")
+    @DisplayName("Pełny przepływ: rejestracja -> logowanie -> /me zwraca spójne dane")
     void fullFlow_register_login_me_consistentData() throws Exception {
         mockMvc.perform(post("/api/register")
                         .contentType(MediaType.APPLICATION_JSON)

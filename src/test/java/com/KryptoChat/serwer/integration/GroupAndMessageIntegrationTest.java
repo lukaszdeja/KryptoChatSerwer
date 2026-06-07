@@ -247,7 +247,7 @@ class GroupAndMessageIntegrationTest {
      * Scenariusz: brak nagłówka Authorization skutkuje odrzuceniem żądania (401).
      */
     @Test
-    @DisplayName("Pobieranie członków: brak tokenu → 401 Unauthorized")
+    @DisplayName("Pobieranie członków: brak tokenu - 401 Unauthorized")
     void getGroupMembers_noToken_returns401() throws Exception {
         mockMvc.perform(get("/api/groups/")).andExpect(status().is4xxClientError());
     }
@@ -256,7 +256,7 @@ class GroupAndMessageIntegrationTest {
      * Scenariusz: nieprawidłowy token (losowy ciąg) skutkuje odrzuceniem (401).
      */
     @Test
-    @DisplayName("Pobieranie członków: nieprawidłowy token → 401 Unauthorized")
+    @DisplayName("Pobieranie członków: nieprawidłowy token - 401 Unauthorized")
     void getGroupMembers_invalidToken_returns401() throws Exception {
         mockMvc.perform(get("/api/groups/")
                         .header("Authorization", "Bearer to.nie.jest.token")).andExpect(status().isUnauthorized());
@@ -264,10 +264,10 @@ class GroupAndMessageIntegrationTest {
 
     /**
      * Scenariusz: użytkownik, który jeszcze nie dołączył do żadnej grupy,
-     * nie może pobrać listy członków — serwer zwraca błąd serwera (5xx).
+     * nie może pobrać listy członków — serwer rzuca wyjatek.
      */
     @Test
-    @DisplayName("Pobieranie członków: user bez grupy → błąd serwera")
+    @DisplayName("Pobieranie członków: user bez grupy - wyjatek")
     void getGroupMembers_userWithoutGroup_returnsServerError() throws Exception {
         String jwt = registerAndLogin(CREATOR_USERNAME);
 
@@ -336,10 +336,10 @@ class GroupAndMessageIntegrationTest {
 
     /**
      * Scenariusz: po utworzeniu grupy, gdy żadna wiadomość nie została wysłana,
-     * endpoint zwraca pustą tablicę.
+     * endpoint zwraca pustą listę.
      */
     @Test
-    @DisplayName("Pobieranie wiadomości: nowa grupa bez wiadomości → pusta lista")
+    @DisplayName("Pobieranie wiadomości: nowa grupa bez wiadomości - pusta lista")
     void getMessages_newGroup_emptyListReturned() throws Exception {
         String creatorJwt = registerAndLogin(CREATOR_USERNAME);
         String groupJwt   = createGroup(creatorJwt, GROUP_NAME);
@@ -351,11 +351,11 @@ class GroupAndMessageIntegrationTest {
     }
 
     /**
-     * Scenariusz: po zapisaniu wiadomości bezpośrednio do repozytorium (pomijając
-     * warstwę HTTP) endpoint pobiera ją i zwraca w odpowiedzi.
+     * Scenariusz: po zapisaniu wiadomości bezpośrednio do repozytorium
+     *  endpoint pobiera ją i zwraca w odpowiedzi.
      */
     @Test
-    @DisplayName("Pobieranie wiadomości: wiadomość zapisana w bazie → widoczna w odpowiedzi")
+    @DisplayName("Pobieranie wiadomości: wiadomość zapisana w bazie - widoczna w odpowiedzi")
     void getMessages_messageSavedInDb_returnedByEndpoint() throws Exception {
         String creatorJwt = registerAndLogin(CREATOR_USERNAME);
         String groupJwt   = createGroup(creatorJwt, GROUP_NAME);
@@ -453,14 +453,12 @@ class GroupAndMessageIntegrationTest {
                 .filter(g -> "DrugaGrupa".equals(g.getGroupName()))
                 .findFirst().orElseThrow();
 
-        // zapisz wiadomość w drugiej grupie
         Message msgGroup2 = new Message();
         msgGroup2.setContent("Wiadomosc tylko dla grupy 2");
         msgGroup2.setSender(sender2.getUsername());
         msgGroup2.setGroupId(group2.getId());
         messageRepository.save(msgGroup2);
 
-        // pierwsza grupa powinna widzieć pustą listę
         mockMvc.perform(get("/api/messages/")
                         .header("Authorization", "Bearer " + group1Jwt))
                 .andExpect(status().isOk())
@@ -495,20 +493,20 @@ class GroupAndMessageIntegrationTest {
     }
 
     /**
-     * Scenariusz: brak nagłówka Authorization przy pobieraniu wiadomości → 401.
+     * Scenariusz: brak nagłówka Authorization przy pobieraniu wiadomości - status 401.
      */
     @Test
-    @DisplayName("Pobieranie wiadomości: brak tokenu → 401 Unauthorized")
+    @DisplayName("Pobieranie wiadomości: brak tokenu - 401 Unauthorized")
     void getMessages_noToken_returns401() throws Exception {
         mockMvc.perform(get("/api/messages/"))
                 .andExpect(status().isBadRequest());
     }
 
     /**
-     * Scenariusz: nieprawidłowy token przy pobieraniu wiadomości → 401.
+     * Scenariusz: nieprawidłowy token przy pobieraniu wiadomości - status 401.
      */
     @Test
-    @DisplayName("Pobieranie wiadomości: nieprawidłowy token → 401 Unauthorized")
+    @DisplayName("Pobieranie wiadomości: nieprawidłowy token - 401 Unauthorized")
     void getMessages_invalidToken_returns401() throws Exception {
         mockMvc.perform(get("/api/messages/")
                         .header("Authorization", "Bearer nieprawidlowytoken123"))
@@ -533,7 +531,7 @@ class GroupAndMessageIntegrationTest {
 
     /**
      * Scenariusz: pełny przepływ — rejestracja, tworzenie grupy, dołączenie
-     * drugiego użytkownika, zapisanie wiadomości przez obu → obie wiadomości
+     * drugiego użytkownika, zapisanie wiadomości przez obu - obie wiadomości
      * widoczne, dane spójne z bazą danych.
      */
     @Test
