@@ -32,6 +32,7 @@ public class LoginResponse {
     }
 
     public String getJwt() { return jwt;}
+
     //setter jwt
     public void setJwt(String jwt) { this.jwt = jwt;}
 

@@ -32,22 +32,27 @@ public class RegisterRequest {
     public String getUsername() {
         return username;
     }
+
     //setter nazwy użytkownika
     public void setUsername(String username) {
         this.username = username;
     }
+
     //getter hasła
     public String getPassword() {
         return password;
     }
+
     //setter hasła
     public void setPassword(String password) {
         this.password = password;
     }
+
     //getter klucza publicznego
     public String getPublicKey() {
         return publicKey;
     }
+
     //setter klucza publicznego
     public void setPublicKey(String key) {
         this.publicKey = key;

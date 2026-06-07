@@ -166,6 +166,16 @@ public class GroupController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Metoda odpowiedzialna za przekazanie zaszyfrowanego klucza grupowego nowemu użytkownikowi.
+     * Waliduje token JWT, pobiera rekord klucza grupowego oczekujący na dostarczenie,
+     * zapisuje zaszyfrowany klucz przesłany przez klienta oraz zmienia status klucza na ACTIVE.
+     * Następnie wysyła powiadomienie WebSocket do użytkownika docelowego informujące o dostępności klucza.
+     *
+     * @param header nagłówek Authorization zawierający token JWT
+     * @param request obiekt zawierający identyfikator użytkownika docelowego oraz zaszyfrowany klucz grupowy
+     * @return ResponseEntity<Void>
+     */
     @PostMapping("/deliver-key")
     public ResponseEntity<Void> deliverKey(@RequestHeader("Authorization") String header, @RequestBody DeliverKeyRequest request) {
         if (header == null || !header.startsWith("Bearer ")) {
@@ -191,6 +201,15 @@ public class GroupController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Metoda odpowiedzialna za pobranie klucza grupowego przypisanego do zalogowanego użytkownika.
+     * Waliduje token JWT, pobiera rekord klucza grupowego z bazy danych i sprawdza jego status.
+     * Jeśli klucz nie został jeszcze dostarczony, zwraca status PENDING.
+     * W przeciwnym przypadku zwraca zaszyfrowany klucz grupowy użytkownika.
+     *
+     * @param header nagłówek Authorization zawierający token JWT
+     * @return ResponseEntity<String>
+     */
     @GetMapping("/my-key")
     public ResponseEntity<String> getMyKey(@RequestHeader("Authorization") String header) {
         if (header == null || !header.startsWith("Bearer ")) {

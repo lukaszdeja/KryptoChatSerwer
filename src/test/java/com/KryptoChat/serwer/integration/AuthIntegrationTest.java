@@ -150,7 +150,7 @@ class AuthIntegrationTest {
     }
 
     /**
-     * Test sprawdzający czy po próbue rejestracji usera z tymi samymi danymi, zostanie rzucony wyjątek umozliwiajacy duplikacje w bazie danych
+     * Test sprawdzający czy po próbie rejestracji usera z tymi samymi danymi, zostanie rzucony wyjątek umozliwiajacy duplikacje w bazie danych
      * @throws Exception
      */
     @Test

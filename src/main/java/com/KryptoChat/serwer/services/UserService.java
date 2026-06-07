@@ -37,7 +37,8 @@ public class UserService {
     }
 
     /**
-     * Logowanie użytkownika
+     * Logowanie użytkownika do systemu.
+     * Weryfikuje poprawność hasła i zwraca obiekt użytkownika.
      */
     public User login(String username, String password) {
 
@@ -51,6 +52,13 @@ public class UserService {
         return user;
     }
 
+    /**
+     * Pobiera użytkownika na podstawie jego identyfikatora.
+     *
+     * @param userId identyfikator użytkownika
+     * @return obiekt User
+     * @throws RuntimeException jeśli użytkownik nie istnieje
+     */
     public User authentification(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));

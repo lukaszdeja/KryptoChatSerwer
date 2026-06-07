@@ -18,11 +18,9 @@ public class UserResponse {
         this.username = username;
     }
 
-    //getter Id
     public Long getId() {
         return id;
     }
-    //getter nazwy uzytkownika
     public String getUsername() {
         return username;
     }

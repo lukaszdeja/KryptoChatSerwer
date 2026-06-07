@@ -5,6 +5,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.TimeZone;
 
+
+/**
+ * Główna klasa uruchomieniowa aplikacji Spring Boot.
+ * Inicjalizuje kontekst aplikacji oraz ustawia domyślną strefę czasową na Europe/Warsaw przed uruchomieniem serwera.
+ */
 @SpringBootApplication
 public class SerwerApplication {
 

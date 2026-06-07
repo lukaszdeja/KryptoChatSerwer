@@ -11,6 +11,12 @@ import java.util.List;
 import java.util.UUID;
 
 
+/**
+ * Serwis odpowiedzialny za zarządzanie grupami w systemie.
+ * Obsługuje tworzenie nowych grup, dołączanie użytkowników
+ * oraz inicjalizację i zarządzanie kluczami grupowymi
+ * wykorzystywanymi do szyfrowania komunikacji.
+ */
 @Service
 public class GroupService {
 
@@ -18,12 +24,31 @@ public class GroupService {
     private final UserRepository userRepository;
     private final GroupKeyRepository groupKeyRepository;
 
+
+    /**
+     * Konstruktor inicjujący serwis grup.
+     *
+     * @param groupRepository repozytorium grup
+     * @param userRepository repozytorium użytkowników
+     * @param groupkey repozytorium kluczy grupowych
+     */
+
     public GroupService(GroupRepository groupRepository, UserRepository userRepository, GroupKeyRepository groupkey) {
         this.groupRepository = groupRepository;
         this.userRepository = userRepository;
         this.groupKeyRepository = groupkey;
     }
 
+
+    /**
+     * Metoda tworząca nową grupę oraz przypisująca do niej użytkownika tworzącego.
+     * Generuje unikalny kod dołączenia do grupy oraz inicjalizuje klucz grupowy dla użytkownika tworzącego grupę.
+     *
+     * @param groupName nazwa tworzonej grupy
+     * @param creator użytkownik tworzący grupę
+     * @param encryptedCreatorKey zaszyfrowany klucz grupowy dla twórcy
+     * @return identyfikator utworzonej grupy
+     */
     @Transactional
     public Long createGroup(String groupName, User creator, String encryptedCreatorKey) {
 
@@ -48,6 +73,16 @@ public class GroupService {
 
         return group.getId();
     }
+
+    /**
+     * Metoda umożliwiająca dołączenie użytkownika do istniejącej grupy.
+     * Weryfikuje kod grupy, przypisuje użytkownika do grupy oraz
+     * tworzy wpis GroupKey w statusie PENDING oczekujący na przekazanie klucza.
+     *
+     * @param code kod dołączenia do grupy
+     * @param user użytkownik dołączający do grupy
+     * @return identyfikator grupy, do której dołączono użytkownika
+     */
     @Transactional
     public Long joinGroup(String code, User user) {
 

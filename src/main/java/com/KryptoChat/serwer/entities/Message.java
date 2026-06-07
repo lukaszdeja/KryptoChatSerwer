@@ -4,6 +4,12 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
+
+/**
+ * Encja reprezentująca wiadomość wysłaną w grupowym czacie użytkowników.
+ * Przechowuje informacje o nadawcy, treści wiadomości, identyfikatorze grupy
+ * oraz czasie wysłania wiadomości.
+ */
 @Entity
 @Table(name = "messages")
 public class Message {

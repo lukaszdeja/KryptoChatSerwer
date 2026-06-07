@@ -5,6 +5,12 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Encja reprezentująca grupę użytkowników w systemie.
+ * Przechowuje informacje o nazwie grupy, kodzie dołączenia
+ * oraz liście użytkowników należących do grupy.
+ */
 @Entity
 @Table(name = "groups")
 public class Group {

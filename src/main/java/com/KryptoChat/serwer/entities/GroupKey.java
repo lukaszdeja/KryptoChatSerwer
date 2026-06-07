@@ -2,6 +2,12 @@ package com.KryptoChat.serwer.entities;
 
 import jakarta.persistence.*;
 
+
+/**
+ * Encja reprezentująca zaszyfrowany klucz grupowy przypisany do użytkownika.
+ * Przechowuje identyfikator grupy, identyfikator użytkownika, zaszyfrowany
+ * klucz grupowy oraz jego aktualny status w procesie dystrybucji kluczy.
+ */
 @Entity
 @Table(name = "group_keys")
 public class GroupKey {

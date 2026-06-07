@@ -8,6 +8,12 @@ import org.springframework.stereotype.Service;
 import java.security.Key;
 import java.util.Date;
 
+
+/**
+ * Serwis odpowiedzialny za obsługę tokenów JWT w systemie.
+ * Umożliwia generowanie tokenów dla użytkowników oraz ich walidację
+ * i ekstrakcję zawartych w nich danych (userId, username, groupId).
+ */
 @Service
 public class JWTService {
 
@@ -18,6 +24,12 @@ public class JWTService {
     private static final long EXPIRATION_TIME = 1000 * 60 * 60;
 
 
+    /**
+     * Konstruktor inicjalizujący klucz podpisu JWT na podstawie zmiennej środowiskowej.
+     * Weryfikuje poprawność długości sekretu i tworzy klucz HMAC.
+     *
+     * @throws IllegalStateException jeśli klucz JWT jest nieobecny lub zbyt krótki
+     */
     public JWTService() {
         this.secret = System.getenv("JWT_SECRET");
 
@@ -30,7 +42,14 @@ public class JWTService {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-
+    /**
+     * Generuje token JWT dla podanego użytkownika.
+     * Token zawiera identyfikator użytkownika, nazwę użytkownika oraz ID grupy (jeśli istnieje),
+     * a także czas wydania i wygaśnięcia.
+     *
+     * @param user użytkownik, dla którego generowany jest token
+     * @return wygenerowany token JWT
+     */
     public String generateToken(User user) {
 
         return Jwts.builder()
@@ -43,7 +62,12 @@ public class JWTService {
                 .compact();
     }
 
-
+    /**
+     * Sprawdza poprawność i ważność tokenu JWT.
+     *
+     * @param token token JWT do weryfikacji
+     * @return true jeśli token jest poprawny, false jeśli wygasł lub jest niepoprawny
+     */
     public boolean isTokenValid(String token) {
         try {
             parse(token);
@@ -53,22 +77,44 @@ public class JWTService {
         }
     }
 
-
+    /**
+     * Ekstrahuje identyfikator użytkownika z tokenu JWT.
+     *
+     * @param token token JWT
+     * @return identyfikator użytkownika
+     */
     public Long extractUserId(String token) {
         return Long.valueOf(parse(token).getSubject());
     }
 
 
+    /**
+     * Ekstrahuje nazwę użytkownika z tokenu JWT.
+     *
+     * @param token token JWT
+     * @return nazwa użytkownika
+     */
     public String extractUsername(String token) {
         return parse(token).get("username", String.class);
     }
 
-
+    /**
+     * Ekstrahuje identyfikator grupy z tokenu JWT.
+     *
+     * @param token token JWT
+     * @return identyfikator grupy lub null jeśli nie istnieje
+     */
     public Long extractGroupId(String token) {
         return parse(token).get("groupId", Long.class);
     }
 
-
+    /**
+     * Parsuje token JWT i zwraca jego zawartość (claims).
+     * Wykorzystuje klucz HMAC do weryfikacji podpisu.
+     *
+     * @param token token JWT
+     * @return obiekt Claims zawierający dane tokenu
+     */
     private Claims parse(String token) {
         return Jwts.parser()
                 .verifyWith((javax.crypto.SecretKey) key)

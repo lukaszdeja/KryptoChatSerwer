@@ -22,6 +22,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+
+/**
+ * Klasa obsługująca komunikację WebSocket pomiędzy klientami aplikacji.
+ * Odpowiada za autoryzację użytkowników przy nawiązywaniu połączenia,
+ * przesyłanie wiadomości grupowych w czasie rzeczywistym oraz obsługę
+ * procesu dystrybucji kluczy grupowych pomiędzy członkami grup.
+ */
+
 @Component
 public class WebSocketHandler extends TextWebSocketHandler {
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
@@ -33,6 +41,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final UserRepository userRepository;
     private final GroupKeyRepository groupKeyRepository;
 
+    /**
+     * Konstruktor inicjujący pola klasy.
+     *
+     * @param userRepository repozytorium użytkowników
+     * @param messageService serwis odpowiedzialny za zapisywanie wiadomości
+     * @param jwtService serwis odpowiedzialny za obsługę tokenów JWT
+     * @param gkr repozytorium kluczy grupowych
+     */
     public WebSocketHandler(UserRepository userRepository, MessageService messageService, JWTService jwtService, GroupKeyRepository gkr) {
         this.userRepository = userRepository;
         this.messageService = messageService;
@@ -40,6 +56,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
         this.groupKeyRepository = gkr;
     }
 
+    /**
+     * Metoda wykonywana po ustanowieniu połączenia WebSocket.
+     * Waliduje token JWT przesłany w nagłówku połączenia,
+     * zapisuje informacje o użytkowniku oraz przypisuje go do odpowiedniego pokoju grupowego.
+     * Następnie obsługuje proces synchronizacji kluczy grupowych dla użytkowników oczekujących.
+     *
+     * @param session aktywna sesja WebSocket użytkownika
+     */
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         try {
@@ -83,6 +107,16 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
     }
 
+
+    /**
+     * Metoda odpowiedzialna za obsługę wymiany kluczy grupowych pomiędzy użytkownikami.
+     * Jeśli użytkownik posiada aktywny klucz grupowy, otrzymuje informacje o użytkownikach
+     * oczekujących na dostarczenie klucza. Jeżeli użytkownik oczekuje na klucz,
+     * wysyłane jest żądanie przekazania klucza do aktywnych członków grupy.
+     *
+     * @param userId identyfikator użytkownika
+     * @param session sesja WebSocket użytkownika
+     */
     private void notifyPendingMembers(Long userId, WebSocketSession session) {
         try {
             User user = userRepository.findById(userId).orElse(null);
@@ -132,6 +166,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
     }
 
+    /**
+     * Metoda wysyłająca powiadomienie do użytkownika o gotowości klucza grupowego.
+     * Informacja przesyłana jest poprzez aktywne połączenie WebSocket.
+     *
+     * @param userId identyfikator użytkownika, który ma zostać powiadomiony
+     */
     public void notifyKeyReady(Long userId) {
         System.out.println("notifyKeaReady lda usera" + userId);
         WebSocketSession session = activeUsers.get(userId);
@@ -154,7 +194,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
     }
 
-
+    /**
+     * Metoda obsługująca przychodzące wiadomości tekstowe WebSocket.
+     * Weryfikuje poprawność danych wiadomości, zapisuje ją w bazie danych
+     * oraz rozsyła do wszystkich aktywnych użytkowników należących do tej samej grupy.
+     *
+     * @param session sesja WebSocket nadawcy wiadomości
+     * @param message odebrana wiadomość tekstowa
+     * @throws Exception w przypadku błędu przetwarzania wiadomości
+     */
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 
@@ -191,6 +239,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
     }
 
+    /**
+     * Metoda wykonywana po zamknięciu połączenia WebSocket.
+     * Usuwa użytkownika z listy aktywnych połączeń oraz z pokojów grupowych.
+     *
+     * @param session zamykana sesja WebSocket
+     * @param status status zamknięcia połączenia
+     */
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
 

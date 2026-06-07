@@ -2,6 +2,12 @@ package com.KryptoChat.serwer.entities;
 
 import jakarta.persistence.*;
 
+/**
+ * Encja reprezentująca użytkownika systemu.
+ * Przechowuje dane uwierzytelniające użytkownika, informacje o grupie,
+ * do której należy, oraz klucze kryptograficzne wykorzystywane
+ * do szyfrowania komunikacji.
+ */
 @Entity
 @Table(name = "users")
 public class User {
