@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -107,12 +108,15 @@ class LoginControllerTest {
      * Test sprawdzajacy czy jesli username bedzie nullem to czy bedzie badRequest w odpowiedzi
      */
     @Test
-    void login_shouldThrowBadRequest_whenUsernameIsNull() {
+    void login_shouldReturnBadRequest_whenUsernameIsNull() throws Exception {
         RegisterRequest request = new RegisterRequest();
         request.setUsername(null);
         request.setPassword(PASSWORD);
-        assertThrows(BadRequestException.class,
-                () -> loginController.login(request)
+        ResponseEntity<LoginResponse> response = loginController.login(request);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(
+                "Login i haslo sa wymagane",
+                response.getBody().getMessage()
         );
     }
 
@@ -120,11 +124,16 @@ class LoginControllerTest {
      * Test sprawdzajacy czy dla hasla bedacego nullem w odpowiedzi zwrocony bedzie bad request
      */
     @Test
-    void login_shouldThrowBadRequest_whenPasswordIsNull() {
+    void login_shouldReturnBadRequest_whenPasswordIsNull() throws Exception {
         RegisterRequest request = new RegisterRequest();
         request.setUsername(USERNAME);
         request.setPassword(null);
-        assertThrows(BadRequestException.class, () -> loginController.login(request));
+        ResponseEntity<LoginResponse> response = loginController.login(request);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(
+                "Login i haslo sa wymagane",
+                response.getBody().getMessage()
+        );
     }
 
     /**

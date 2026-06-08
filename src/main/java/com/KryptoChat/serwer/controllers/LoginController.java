@@ -50,7 +50,10 @@ public class LoginController {
         LoginResponse response;
         if (request.getUsername() == null || request.getUsername().isBlank()
                 || request.getPassword() == null || request.getPassword().isBlank()) {
-            throw new BadRequestException("Login i hasło są wymagane");
+            return ResponseEntity.badRequest().body(new LoginResponse(null, null, "Login i haslo sa wymagane"));
+        }
+        if (request.getUsername().length() > 20 || request.getUsername().length() > 30) {
+            return ResponseEntity.badRequest().body(new LoginResponse(null, null, "Login lub haslo sa zbyt dlugie"));
         }
         user = userService.login(request.getUsername(), request.getPassword());
         Long groupId;

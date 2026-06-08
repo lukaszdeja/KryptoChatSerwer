@@ -219,7 +219,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 return;
             }
             String content = node.has("content") ? node.get("content").asText() : null;
-            if (content == null || content == "" || content.length() > 500) {
+            if (content == null || content == "" || content.length() > 1500) {
                 return;
             }
             if (user.getGroup().getId() == null || !user.getGroup().getId().equals(groupId)) {

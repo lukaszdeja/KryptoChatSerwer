@@ -338,10 +338,9 @@ class AuthIntegrationTest {
     void login_nullUsername_returns400() throws Exception {
         RegisterRequest req = buildValidRequest();
         req.setUsername(null);
-        assertThrows(Exception.class, () ->
-                mockMvc.perform(post("/api/login")
+        mockMvc.perform(post("/api/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req))));
+                        .content(objectMapper.writeValueAsString(req))).andExpect(status().isBadRequest());
     }
 
     /**

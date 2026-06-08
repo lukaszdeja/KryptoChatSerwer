@@ -474,7 +474,7 @@ class WebSocketHandlerTest {
     void handleTextMessage_shouldNotSaveWhenContentExceeds500Characters() throws Exception {
         WebSocketSession session = connectUser(user, "ACTIVE");
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        String longContent = "a".repeat(501);
+        String longContent = "a".repeat(1501);
         String payload = "{\"type\":\"CHAT\",\"content\":\"" + longContent + "\"}";
         handler.handleTextMessage(session, new TextMessage(payload));
         verify(messageService, never()).save(any(Message.class));

@@ -354,12 +354,12 @@ class WebSocketMessageIntegrationTest {
      * @throws Exception
      */
     @Test
-    @DisplayName("Treść > 500 znaków - nic nie zapisane w bazie")
+    @DisplayName("Treść > 1500 znaków - nic nie zapisane w bazie")
     void chat_contentTooLong_notSaved() throws Exception {
         userA = createUser("userA");
         group = createGroupWithMember(userA, "ACTIVE");
         userA = userRepository.findById(userA.getId()).orElseThrow();
-        String longContent = "a".repeat(501);
+        String longContent = "a".repeat(1501);
         WebSocketSession session = connect(jwtService.generateToken(userA), new CopyOnWriteArrayList<>());
         Thread.sleep(300);
         session.sendMessage(new TextMessage(
