@@ -11,11 +11,11 @@ import jakarta.validation.constraints.Size;
 public class RegisterRequest {
 
     @NotBlank
-    @Size(min = 3, max = 20)
+    @Size(min = 3, max = 20, message =  "Login jest zbyt dlugi")
     private String username;
 
     @NotBlank
-    @Size(min = 8, max = 50)
+    @Size(min = 8, max = 30, message = "Haslo jest zbyt dlugie")
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z0-9]).+$",
             message = "Hasło nie spełnia wymagań"
     )
