@@ -97,7 +97,6 @@ public class LoginController {
             groupId = user.getGroup().getId();
         }
 
-
         return ResponseEntity.ok(new UserCredentials(user.getId(), user.getUsername(), groupId));
     }
 }

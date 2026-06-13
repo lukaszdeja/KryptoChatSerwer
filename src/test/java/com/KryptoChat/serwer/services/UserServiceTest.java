@@ -142,7 +142,7 @@ class UserServiceTest {
         RuntimeException ex = assertThrows(RuntimeException.class,
                 () -> userService.authentification(99L));
 
-        assertThat(ex.getMessage()).contains("User not found");
+        assertThat(ex.getMessage()).contains("Nie znalezniono użytkownika");
     }
 
 

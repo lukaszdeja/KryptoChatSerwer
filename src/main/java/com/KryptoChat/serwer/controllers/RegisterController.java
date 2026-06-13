@@ -33,10 +33,7 @@ public class RegisterController {
     public ResponseEntity<String> register(
             @Valid  @RequestBody RegisterRequest request
     ) {
-        if (request.getUsername().length() > 20 || request.getPassword().length() > 30) {
-            return ResponseEntity.badRequest().body("Login lub haslo jest zbyt dlugie");
-        }
-        userService.register(request.getUsername(), request.getPassword(), request.getPublicKey(), request.getEncryptedPrivateKey());
+        userService.register(request.getUsername().trim(), request.getPassword(), request.getPublicKey(), request.getEncryptedPrivateKey());
         return ResponseEntity.ok("Uzytkownik sie zarejestrowal");
     }
 }

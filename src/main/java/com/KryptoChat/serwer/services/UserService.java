@@ -61,7 +61,7 @@ public class UserService {
      */
     public User authentification(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("Nie znalezniono użytkownika"));
         return user;
     }
 
