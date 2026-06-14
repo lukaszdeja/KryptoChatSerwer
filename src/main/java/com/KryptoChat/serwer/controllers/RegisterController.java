@@ -7,6 +7,7 @@ import com.KryptoChat.serwer.services.*;
 
 /**
  * Klasa obsługująca kontroler rejestracji obsługujący żądania REST rejestracji użytkowników
+ * Zapis kont w bazie danych (poprzez serwis)
  */
 @RestController
 @RequestMapping("/api")

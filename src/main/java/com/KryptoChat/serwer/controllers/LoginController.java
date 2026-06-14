@@ -21,6 +21,8 @@ import java.util.function.Function;
 
 /**
  * Klasa realizująca kontroler Logowania obsługujący żądania REST
+ * Realizuje logowanie oraz autentyfikacje
+ * Endpoint me - walidacja zapisanego juz tokenu przy ponownym uruchomieniu aplikacji
  */
 @RestController
 @RequestMapping("/api")

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 /**
  * Kontroler odpowiedzialny za żądanie REST zaczytania wiadomości z bazy danych
+ * Realizuje zaczytywanie wiadomości po uruchomieniu aplikacji (z bazy danych)
  */
 @RestController
 @RequestMapping("api/messages")

@@ -13,6 +13,10 @@ import java.util.List;
 
 /**
  * Klasa obsługująca backendowy kontroler REST API dla widoku grup na kliencie, obsługuje żądania REST
+ * Realizuje tworzenie grup
+ * Dołączanie do grup
+ * Zaczytywanie członków grupy
+ * Oraz transport kluczy AES dla nowych czlonkow
  */
 
 @RestController

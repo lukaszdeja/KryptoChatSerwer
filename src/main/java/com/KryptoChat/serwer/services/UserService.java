@@ -5,6 +5,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.KryptoChat.serwer.repositories.*;
 import com.KryptoChat.serwer.entities.*;
 
+/**
+ * Klasa serwisu łącząca kontrolery rejestracji i logowania z resztą architektury
+ * Z repozytoriami i bazą danych
+ * Zapis i odczytywanie użytkowników z bazy danych
+ */
 @Service
 public class UserService {
 
