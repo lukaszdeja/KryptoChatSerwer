@@ -23,7 +23,7 @@ https://kryptochatserwer-production.up.railway.app/
 Gdzie można zobaczyć informację o tym, że aplikacja działa. Hosting deployuje najnowszy commit z tego repozytorium.
 Hosting uruchamia aplikacją na JDK 21.0.2, używa PostgreSQL 18.3. W przypadku chęci uruchomienia aplikacji serwerowej lokalnie, konieczne jest skonfigurowanie bazy danych oraz utworzenie zmiennych środowiskowych wykorzystywanych przez JDK: DATABASE_URL, PGUSER, PGPASSWORD z odpowiednimi wartosciami. Absolutnie konieczne jest również ustawienie zmiennej środowiskowej JWT_SECRET - ciąg co najmniej 32 znaków, gdyż serwis tokenów JWT korzysta z niej przy tworzeniu tokenów. Aplikacja jest zbudowana na frameworku Spring Boot w wersji 3.3.5. W przypadku chęci uruchomienia jej lokalnie, należy uruchamiać poprzez mavena korzystając z pluginu spring-boot:run (podobnie jak na kliencie javafx:run) lub z konsoli mvn spring-boot:run. Uruchamianie aplikacji lokalnie NIE JEST jednak zalecane, wskazane jest żeby tego nie robić, gdyż adresy endpointów oraz websocketa są skonfigurowane na kliencie tak aby łączyć się z adresem hostingowym, a aplikacja na HOSTINGU w wersji produkcyjnej DZIAŁA W PEŁNI POPRAWNIE i realizuje wszystkie funkcjonalności.
 
-Uruchomienie testów:
+Uruchomienie testów (NA JAVIE 21 TRZEBA):
 
 ZALECANE jest jedynie uruchomienie testów jednostkowych oraz integracyjnych aplikacji serwera lokalnie. Plik test > resources > application.properties pozwala na uruchomienie testów jednostkowych (zignorowanie bazy danych), a plik test > resources > application-integration.properties pozwala na uruchomienie testów integracyjnych (Baza danych h2). Do uruchomienia testów konieczne jest do tego edytowanie Run Configuration testów, tak aby zawierała zmienną środowiskową JWT_SECRET zawierającą ciąg co najmniej 32 znaków, najlepiej liczb. Najłatwiej zrobić to w IntelliJ w następujący sposób:
 
@@ -40,4 +40,19 @@ Następnie apply oraz OK.
 
 5. Po konfiguracji można uruchomić wszystkie testy ponownie - zielony trójkątny przycisk obok All in serwer na górze.
 6. W przypadku chęci uruchomienia tylko części testów, na przykład konkretnego pliku lub pakietu, konieczne jest analogiczne ustawienie konfiguracji uruchomieniowej dla nich.
+
+
+Uruchomienie testów serwera bez IntelliJ:
+Tymczasowo przełączamy wersję Javy z 25(klient) na 21:
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+export PATH=$JAVA_HOME/bin:$PATH
+
+Eksportujemy zmienną środowiskową:
+export JWT_SECRET=12345678901234567890123456789012
+Uruchamiamy testy:
+(w katalogu KryptoChatSerwer tam znajduje się pom.xml)
+mvn test
+
+
+
 
